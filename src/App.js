@@ -20,6 +20,8 @@ class App extends Component {
       processStatus: false,
       hash: "",
       challengeID: 0,
+      selectedContender: "",
+      selectedProposal: "",
 
       renderRegisterForm: false,
       renderChallengerForm: false,
@@ -133,6 +135,14 @@ class App extends Component {
     })
   }
 
+  handleChallenge(_contenderHash){
+    this.setState({
+      selectedContender: _contenderHash
+    },() => {
+      this.renderComponent("challengerForm");
+    })
+  }
+
   render() {
 
     let process = "";
@@ -150,12 +160,14 @@ class App extends Component {
     let renderProposals = "";
 
     if(this.state.renderRegisterForm) renderRegisterForm = <RegisterForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
-    else if(this.state.renderChallengerForm) renderChallengerForm = <ChallengerForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
+    else if(this.state.renderChallengerForm) renderChallengerForm = <ChallengerForm predefinedHash = {this.state.selectedContender} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderProposalForm) renderProposalForm = <ProposalForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderChampions) renderChampions = <Champions instance = {this.state.env}/>
-    else if(this.state.renderContenders) renderContenders = <Contenders instance = {this.state.env}/>
+    else if(this.state.renderContenders) renderContenders = <Contenders challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderParameterizers) renderParameterizers = <Parameterizers instance = {this.state.env}/>
     else if(this.state.renderProposals) renderProposals = <Proposals instance = {this.state.env}/>
+
+    
 
     return (
       <div className="App" style={{float:"left", textAlign: "left"}}>

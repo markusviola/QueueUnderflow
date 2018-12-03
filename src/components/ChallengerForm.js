@@ -8,14 +8,18 @@ class ChallengerForm extends Component {
 
         this.state = {
             minDeposit: "Calculating...",
-            statement: ""
+            statement: "",
+            contenderHash: ""
         }
     }
 
     componentDidMount(){
         this.props.instance.paramGet("minDeposit")
         .then((_minDeposit)=>{
-            this.setState({minDeposit: _minDeposit});
+            this.setState({
+                minDeposit: _minDeposit,
+                contenderHash: this.props.predefinedHash
+            });
         })
     }
 
@@ -37,9 +41,9 @@ class ChallengerForm extends Component {
         <div className="ChallengerForm">
             <h3>Challenge A Contender!</h3>
             <form onSubmit={this.handleSubmit.bind(this)}>
-                <div>
+                <div style={{width: "300px"}}>
                     <label>Contender ID:</label><br/>
-                    <input type="text" ref="hash" />
+                    <input type="text" ref="hash" value={this.state.contenderHash}/>
                 </div>
                 <div>
                     <label>Challenge Stake:</label><br/>

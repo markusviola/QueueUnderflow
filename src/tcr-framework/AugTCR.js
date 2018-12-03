@@ -4,6 +4,22 @@ import contracts from './ContractInstances';
 class AugTCR {
 
     constructor() {
+        
+        this.paramNames = [
+            "minDeposit", 
+            "pMinDeposit", 
+            "applyStageLen", 
+            "pApplyStageLen", 
+            "commitStageLen", 
+            "pCommitStageLen",
+            "revealStageLen",
+            "pRevealStageLen",
+            "dispensationPct",
+            "pDispensationPct",
+            "voteQuorum",
+            "pVoteQuorum"
+        ]
+
         //Initializes the Web3 connection instance.
         if(typeof window.web3 != 'undefined'){
             console.log("Using web3 detected from external source like Metamask");
@@ -21,6 +37,7 @@ class AugTCR {
         //Sets the contract connection for the instance.
         const OrchContract = window.web3.eth.contract(contracts.orchestratorABI);
         this.contractInstance = OrchContract.at(contracts.orchestratorAddress);
+        
     }
 
     //Events
@@ -305,12 +322,17 @@ class AugTCR {
 
     //Array of Bytes32
     registryBatchUpdateStatuses(_contenderHashes){
-        this.registryInstance.batchUpdateStatuses(_contenderHashes,
-            {gas: 3000000, from: window.web3.eth.accounts[0]},
-            (err, result) => {
-                alert("Transaction Successful!");
-            }
-        );
+        return new Promise((resolve) => {
+            this.registryInstance.batchUpdateStatuses(_contenderHashes,
+                {gas: 3000000, from: window.web3.eth.accounts[0]},
+                (err, result) => {
+                    if(typeof result === 'undefined'){
+                        resolve(false)
+                    }
+                    else resolve(true)
+                }
+            );
+        });
     }
 
     //Array of Integer
@@ -391,11 +413,12 @@ class AugTCR {
         return new Promise((resolve) => {
             let contenders = []
             this.registryInstance.getContenderNonce(
-                (err, result) => {
-                    for(let i = 0; i<result.length; i++){
-                        this.registryInstance.getContender(result[i],
+                (err, nonce) => {
+                    for(let i = 0; i<nonce.length; i++){
+                        this.registryInstance.getContender(nonce[i],
                             (err, result) => {
                                 contenders.push({
+                                    contenderHash: nonce[i],
                                     desc: result[0],
                                     challengeID: result[1].c[0],
                                     appExpiry: result[2].c[0],
@@ -404,7 +427,7 @@ class AugTCR {
                                 });
                             }
                         );
-                        if(i === result.length - 1){
+                        if(i === nonce.length - 1){
                             resolve(contenders);
                         }
                     }
@@ -531,14 +554,14 @@ class AugTCR {
         ); 
     }
 
-    paramSet(_name, _value){
-        this.parameterizerInstance.set(_name, _value,
-            {gas: 3000000, from: window.web3.eth.accounts[0]},
-            (err, result) => {
-                alert("Transaction Successful!");
-            }
-        );
-    }
+    // paramSet(_name, _value){
+    //     this.parameterizerInstance.set(_name, _value,
+    //         {gas: 3000000, from: window.web3.eth.accounts[0]},
+    //         (err, result) => {
+    //             alert("Transaction Successful!");
+    //         }
+    //     );
+    // }
 
     paramGet(_name){
         return new Promise((resolve) => {
@@ -548,6 +571,27 @@ class AugTCR {
                 }
             ); 
         });
+    }
+
+    paramGetAllParameterizers(){
+
+        return new Promise((resolve) => {
+            let parameterizers = []
+            
+            for(let i = 0; i<this.paramNames.length; i++){
+                this.parameterizerInstance.get(this.paramNames[i],
+                    (err, result) => {
+                        parameterizers.push({
+                            paramName: this.paramNames[i],
+                            paramVal: result.c[0]
+                        });
+                    }
+                );
+                if(i === this.paramNames.length - 1){
+                    resolve(parameterizers);
+                }
+            }     
+        });    
     }
 
     paramGetProposalNonce() {
@@ -573,26 +617,29 @@ class AugTCR {
     }
 
     paramGetAllProposals(){
+        return new Promise((resolve) => {
         let proposals = []
-        this.parameterizerInstance.getContenderNonce(
-            (err, result) => {
-                for(let i = 0; i<result.length; i++){
-                    this.parameterizerInstance.getContender(i,
-                        (err, result) => {
-                            proposals.push({
-                                paramName: result[0],
-                                paramVal: result[1].c[0],
-                                challengeID: result[2].c[0],
-                                proposalExpiry: result[3].c[0],
-                            });
+            this.parameterizerInstance.getProposalNonce(
+                (err, result) => {
+                    for(let i = 0; i<result.length; i++){
+                        this.parameterizerInstance.getProposal(result[i],
+                            (err, result) => {
+                                // console.log(result);
+                                proposals.push({
+                                    paramName: result[0],
+                                    paramVal: result[1].c[0],
+                                    challengeID: result[2].c[0],
+                                    proposalExpiry: result[3].c[0],
+                                });
+                            }
+                        );
+                        if(i === result.length - 1){
+                            resolve(proposals);
                         }
-                    );
-                    if(i === result.length - 1){
-                        return proposals;
                     }
                 }
-            }
-        );   
+            );   
+        });    
     }
 
     paramGetChallengeNonce() {
