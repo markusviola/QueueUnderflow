@@ -8,7 +8,8 @@ class Contenders extends Component {
         super();
 
         this.state = {
-            currentContenders: []
+            currentContenders: [],
+            currentChallenges: []
         }
     }
 
@@ -18,11 +19,6 @@ class Contenders extends Component {
             setTimeout(()=>{
 
                 for(let i=0; i<result.length; i++){
-                    console.log("contender: "+result[i].desc);
-                    console.log("issuer: "+result[i].issuer);
-                    console.log("isChampion: "+result[i].isChampion);
-                    console.log("challengeID: "+result[i].challengeID);
-                    console.log("applicationExpiry: "+result[i].appExpiry);
                     
                     let updatedContenders = this.state.currentContenders;
                     var expiration;
@@ -47,9 +43,46 @@ class Contenders extends Component {
             }, 1000)
         });
     }
+
+    getAllChallenges(){
+        this.props.instance.registryGetAllChallenges()
+        .then((result) => {
+            setTimeout(()=>{
+
+                for(let i=0; i<result.length; i++){
+                    
+                    let updatedChallenges = this.state.currentChallenges;
+
+                    var commitExpiry;
+                    var revealExpiry;
+                    var now = new Date();
+                    var commitEndDate = new Date(result[i].commitEndDate*1000);
+                    var revealEndDate = new Date(result[i].revealEndDate*1000);
+                    
+
+                    if(now > commitEndDate) commitExpiry = "Voting duration concluded."
+                    else commitExpiry = "Commit: Voting expires "+moment(commitEndDate).from(now)+". Keep voting!";
+
+                    if(now > revealEndDate) revealExpiry = "Challenge duration concluded."
+                    else revealExpiry = "Reveal: Confirmation expires "+moment(revealEndDate).from(now)+". Confirm now!"
+
+                    
+                    updatedChallenges.push({
+                        key: i+1,
+                        incentivePool: result[i].contenderHash,
+                        isConcluded: result[i].desc,
+                        commitState: result[i].commitExpiry,
+                        revealState: result[i].revealExpiry
+                    })
+                    this.setState({currentChallenges: updatedChallenges});
+                }
+            }, 1000)
+        })
+    }   
     
     componentDidMount(){
         this.getContenderItems();
+        this.getAllChallenges();
     }
 
     handleChallenge(_contenderHash){

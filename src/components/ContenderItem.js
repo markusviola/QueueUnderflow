@@ -47,7 +47,8 @@ class ContenderItem extends Component {
         <div className="ContenderItem">
             <br/>
             <strong>{this.props.item.contender}</strong> {challengeState} {challengeButton} {updateButton} <br/>
-            {this.props.item.applicationExpiry}
+            {this.props.item.applicationExpiry}<br/>
+            Challenge ID：{this.props.item.challengeID}
             <br/>
         </div>
     );

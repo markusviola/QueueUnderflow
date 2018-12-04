@@ -464,30 +464,33 @@ class AugTCR {
     }
 
     registryGetAllChallenges(){
-        let challenges = []
-        this.registryInstance.getChallengeNonce(
-            (err, result) => {
-                for(let i = 0; i<result.length; i++){
-                    let challenge = {}
-                    this.registryInstance.getChallenge(i,
-                        (err, result) => {
-                            challenge.isConcluded = result[0];
-                            challenge.incentivePool = result[1].c[0];
-                            this.plcrInstance.getPoll(i,
-                                (err, result) => {
-                                    challenge.commitEndDate = result[0].c[0];
-                                    challenge.revealEndDate = result[1].c[0];
-                                    challenges.push(challenge);
-                                }    
-                            );
+        return new Promise((resolve) => {
+            let challenges = []
+            this.registryInstance.getChallengeNonce(
+                (err, nonce) => {
+                    for(let i = 0; i<nonce.length; i++){
+                        let challenge = {}
+                        this.registryInstance.getChallenge(nonce[i],
+                            (err, result) => {
+                                challenge.isConcluded = result[0];
+                                challenge.incentivePool = result[1].c[0];
+                                this.plcrInstance.getPoll(nonce[i],
+                                    (err, result) => {
+                                        challenge.commitEndDate = result[0].c[0];
+                                        challenge.revealEndDate = result[1].c[0];
+                                        challenges.push(challenge);
+                                    }    
+                                );
+                            }
+                        );  
+                        if(i === nonce.length - 1){
+                            resolve(challenges);
                         }
-                    );  
-                    if(i === result.length - 1){
-                        return challenges;
                     }
                 }
-            }
-        );   
+            ); 
+        });
+          
     }
 
     //Parameterizer Functions
