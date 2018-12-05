@@ -34,14 +34,14 @@ class App extends Component {
   }
 
   initEnvironment(){
-    this.setState({ env: new augTCR()});
-    setTimeout(() => {
-        this.state.env.setEnvironmentInstance(
-          "0x060A4b9CE5cc529677A8cA542aea98929b170900",
-          "0x6835308EA5C8962Cb160188E96c88D2163B18Dfd",
-          "0xa7056cA8F5c556e7F275c045cc28b57Bb0c4C469")
-        .then(()=>{
-          this.setState({envStatus: true}, ()=>{
+    this.setState({ env: new augTCR()}, ()=>{
+      this.state.env.setEnvironmentInstance(
+        "0x060A4b9CE5cc529677A8cA542aea98929b170900",
+        "0x6835308EA5C8962Cb160188E96c88D2163B18Dfd",
+        "0xa7056cA8F5c556e7F275c045cc28b57Bb0c4C469")
+      .then(()=>{
+        this.setState({envStatus: true}, ()=>{
+          this.setState({renderRegisterForm: true},()=>{
             this.state.env.PLCRGetTokenAddress()
             .then((tokenAddress)=> {
               console.log("EIP20 Token: "+tokenAddress);
@@ -49,8 +49,9 @@ class App extends Component {
               this.initEventWatchers();
             });
           })
-        });
-    }, 250);
+        })
+      });
+    });
   }
 
   initEventWatchers(){
@@ -59,6 +60,8 @@ class App extends Component {
     this.state.env.registryNewChallenge().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.paramNewProposal().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.paramNewProposalChallenge().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.PLCRVoteCommited().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.PLCRVoteRevealed().then((result)=>{this.hideProcess(result[0],result[1])});
   }
 
   hideProcess(result,message){
@@ -163,7 +166,7 @@ class App extends Component {
     else if(this.state.renderChallengerForm) renderChallengerForm = <ChallengerForm predefinedHash = {this.state.selectedContender} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderProposalForm) renderProposalForm = <ProposalForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderChampions) renderChampions = <Champions instance = {this.state.env}/>
-    else if(this.state.renderContenders) renderContenders = <Contenders challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
+    else if(this.state.renderContenders) renderContenders = <Contenders onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderParameterizers) renderParameterizers = <Parameterizers instance = {this.state.env}/>
     else if(this.state.renderProposals) renderProposals = <Proposals instance = {this.state.env}/>
 

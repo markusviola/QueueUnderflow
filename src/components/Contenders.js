@@ -16,40 +16,56 @@ class Contenders extends Component {
     getContenderItems(){
         this.props.instance.registryGetAllContenders()
         .then((result) => {
-            setTimeout(()=>{
+            for(let i=0; i<result.length; i++){
+            
+                let updatedContenders = this.state.currentContenders;
+                var incentivePool = "N/A";
+                var isConcluded = "N/A";
+                var commitState = "N/A";
+                var revealState = "N/A";
 
-                for(let i=0; i<result.length; i++){
-                    
-                    let updatedContenders = this.state.currentContenders;
-                    var expiration;
-                    var date1 = new Date(result[i].appExpiry*1000);
-                    var date2 = new Date();
+                var expiration;
+                var applyExpiry = new Date(result[i].appExpiry*1000);
+                var now = new Date();
 
-                    if(date2 > date1) expiration = "Process finished."
-                    else expiration = "Application expires "+moment(date1).from(date2)+".";
-
-                    
-                    updatedContenders.push({
-                        key: i+1,
-                        contenderHash: result[i].contenderHash,
-                        contender: result[i].desc,
-                        issuer: result[i].issuer,
-                        isChampion: result[i].isChampion,
-                        challengeID: result[i].challengeID,
-                        applicationExpiry: expiration
-                    })
-                    this.setState({currentContenders: updatedContenders});
+                if(now > applyExpiry) expiration = "Process finished."
+                else expiration = "Application expires "+moment(applyExpiry).from(now)+".";
+                
+                var challenges = this.state.currentChallenges
+                for(let j=0; j<challenges.length; j++){
+                    if(challenges[j].challengeID === result[i].challengeID){
+                        incentivePool = challenges[j].incentivePool;
+                        isConcluded = challenges[j].isConcluded;
+                        commitState = challenges[j].commitState;
+                        revealState = challenges[j].revealState;
+                    }
                 }
-            }, 1000)
+                
+                updatedContenders.push({
+                    key: i+1,
+                    contenderHash: result[i].contenderHash,
+                    contender: result[i].desc,
+                    issuer: result[i].issuer,
+                    isChampion: result[i].isChampion,
+                    challengeID: result[i].challengeID,
+                    applicationExpiry: expiration,
+                    incentivePool: incentivePool,
+                    isConcluded: isConcluded,
+                    commitVoteExpiry: commitState,
+                    revealVoteExpiry: revealState
+                })
+
+                this.setState({currentContenders: updatedContenders});
+            }
         });
     }
 
     getAllChallenges(){
-        this.props.instance.registryGetAllChallenges()
-        .then((result) => {
-            setTimeout(()=>{
-
-                for(let i=0; i<result.length; i++){
+        return new Promise((resolve) => {
+            this.props.instance.registryGetAllChallenges()
+            .then((result) => {
+                let i=0;
+                for(; i<result.length; i++){
                     
                     let updatedChallenges = this.state.currentChallenges;
 
@@ -59,34 +75,46 @@ class Contenders extends Component {
                     var commitEndDate = new Date(result[i].commitEndDate*1000);
                     var revealEndDate = new Date(result[i].revealEndDate*1000);
                     
-
                     if(now > commitEndDate) commitExpiry = "Voting duration concluded."
-                    else commitExpiry = "Commit: Voting expires "+moment(commitEndDate).from(now)+". Keep voting!";
+                    else commitExpiry = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+". Keep voting!"}<br/></div>;
 
-                    if(now > revealEndDate) revealExpiry = "Challenge duration concluded."
-                    else revealExpiry = "Reveal: Confirmation expires "+moment(revealEndDate).from(now)+". Confirm now!"
+                    if(now > revealEndDate) revealExpiry = "Reveal duration concluded."
+                    else revealExpiry = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+". Confirm now!"}<br/></div>;
 
-                    
                     updatedChallenges.push({
                         key: i+1,
-                        incentivePool: result[i].contenderHash,
-                        isConcluded: result[i].desc,
-                        commitState: result[i].commitExpiry,
-                        revealState: result[i].revealExpiry
+                        challengeID: result[i].challengeID,
+                        incentivePool: result[i].incentivePool,
+                        isConcluded: result[i].isConcluded,
+                        commitState: commitExpiry,
+                        revealState: revealExpiry
                     })
-                    this.setState({currentChallenges: updatedChallenges});
+                    this.setState({currentChallenges: updatedChallenges}, () => {
+                        if(i === result.length -1){
+                            resolve();
+                        }
+                    });
                 }
-            }, 1000)
+            })
         })
+        
     }   
     
+
     componentDidMount(){
-        this.getContenderItems();
-        this.getAllChallenges();
+        
+        this.getAllChallenges().then(() => {
+            this.getContenderItems();
+        });
+        
     }
 
     handleChallenge(_contenderHash){
         this.props.challengeClicked(_contenderHash);
+    }
+
+    handleToggleProcess(isTransaction){
+        this.props.onProcess(isTransaction);
     }
 
     render() {
@@ -95,7 +123,7 @@ class Contenders extends Component {
         if(this.state.currentContenders){
             items = this.state.currentContenders.map(item => {
                 return (
-                    <ContenderItem instance = {this.props.instance} challengeClicked = {this.handleChallenge.bind(this)} key={item.key} item = {item}/>
+                    <ContenderItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} challengeClicked = {this.handleChallenge.bind(this)} key={item.key} item = {item}/>
                 )
             });
         }

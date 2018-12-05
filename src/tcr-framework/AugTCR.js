@@ -52,6 +52,28 @@ class AugTCR {
         }); 
     }
 
+    PLCRVoteCommited(){
+        return new Promise((resolve)=>{
+            this.plcrInstance._VoteCommitted().watch((error, result)=>{
+                if(!error) {
+                    resolve([true,"Commited vote!"]);
+                }
+                else resolve([false, "Transaction failed."]);
+            })
+        }); 
+    }
+
+    PLCRVoteRevealed(){
+        return new Promise((resolve)=>{
+            this.plcrInstance._VoteRevealed().watch((error, result)=>{
+                if(!error) {
+                    resolve([true,"Revealed vote!"]);
+                }
+                else resolve([false, "Transaction failed."]);
+            })
+        }); 
+    }
+
     paramOperationEvent(){
         return new Promise((resolve)=>{
             this.parameterizerInstance.OperationSuccess().watch((error, result)=>{
@@ -231,21 +253,32 @@ class AugTCR {
     }
 
     PLCRCommitVote(_pollID, _voteOption, _salt, _numTokens){
-        this.plcrInstance.commitVote(_pollID, window.web3.utils.keccak256(_voteOption+ '' +_salt), _numTokens, 0,
-            {gas: 3000000, from: window.web3.eth.accounts[0]},
-            (err, result) => {
-                alert("Transaction Successful!");
-            }
-        );
+        return new Promise((resolve) => {
+            this.plcrInstance.commitVote(_pollID, window.web3.sha3(_voteOption+ '' +_salt, {encoding: "hex"}), _numTokens, 0,
+                {gas: 3000000, from: window.web3.eth.accounts[0]},
+                (err, result) => {
+                    if(typeof result === 'undefined'){
+                        resolve(false)
+                    }
+                    else resolve(true)
+                }
+            );
+        })
+        
     }
 
     PLCRRevealVote(_pollID, _voteOption, _salt){
-        this.plcrInstance.revealVote(_pollID, _voteOption, _salt,
-            {gas: 3000000, from: window.web3.eth.accounts[0]},
-            (err, result) => {
-                alert("Transaction Successful!");
-            }
-        );
+        return new Promise((resolve) => {
+            this.plcrInstance.revealVote(_pollID, _voteOption, _salt,
+                {gas: 3000000, from: window.web3.eth.accounts[0]},
+                (err, result) => {
+                    if(typeof result === 'undefined'){
+                        resolve(false)
+                    }
+                    else resolve(true)
+                }
+            );
+        })
     }
 
     PLCRAAAExpireCommitDuration(_pollID){
@@ -409,7 +442,6 @@ class AugTCR {
     }
 
     registryGetAllContenders(){
-
         return new Promise((resolve) => {
             let contenders = []
             this.registryInstance.getContenderNonce(
@@ -425,11 +457,11 @@ class AugTCR {
                                     isChampion: result[3],
                                     issuer: result[4]
                                 });
+                                if(i === nonce.length - 1){
+                                    resolve(contenders);
+                                }
                             }
                         );
-                        if(i === nonce.length - 1){
-                            resolve(contenders);
-                        }
                     }
                 }
             );   
@@ -445,22 +477,25 @@ class AugTCR {
             }
         );   
     }
-
+    
     registryGetChallenge(_challengeID) {
-        let challenge = {}
-        this.registryInstance.getChallenge(_challengeID,
-            (err, result) => {
-                challenge.isConcluded = result[0];
-                challenge.incentivePool = result[1].c[0];
-                this.plcrInstance.getPoll(_challengeID,
-                    (err, result) => {
-                        challenge.commitEndDate = result[0].c[0];
-                        challenge.revealEndDate = result[1].c[0];
-                        return challenge;
-                    }    
-                );
-            }
-        );  
+        return new Promise((resolve) => {
+            let challenge = {}
+            this.registryInstance.getChallenge(_challengeID,
+                (err, result) => {
+                    challenge.challengeID = _challengeID;
+                    challenge.isConcluded = result[0];
+                    challenge.incentivePool = result[1].c[0];
+                    this.plcrInstance.getPoll(_challengeID,
+                        (err, result) => {
+                            challenge.commitEndDate = result[0].c[0];
+                            challenge.revealEndDate = result[1].c[0];
+                            resolve(challenge);
+                        }    
+                    );
+                }
+            );  
+        })
     }
 
     registryGetAllChallenges(){
@@ -472,20 +507,24 @@ class AugTCR {
                         let challenge = {}
                         this.registryInstance.getChallenge(nonce[i],
                             (err, result) => {
+                                challenge.challengeID = nonce[i].c[0];
                                 challenge.isConcluded = result[0];
                                 challenge.incentivePool = result[1].c[0];
                                 this.plcrInstance.getPoll(nonce[i],
                                     (err, result) => {
                                         challenge.commitEndDate = result[0].c[0];
                                         challenge.revealEndDate = result[1].c[0];
-                                        challenges.push(challenge);
-                                    }    
+                                        challenges.push(challenge); 
+
+                                        if(i === nonce.length - 1){
+                                            resolve(challenges);
+                                        }
+                                        
+                                    }  
                                 );
                             }
                         );  
-                        if(i === nonce.length - 1){
-                            resolve(challenges);
-                        }
+                        
                     }
                 }
             ); 
