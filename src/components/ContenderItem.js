@@ -17,7 +17,10 @@ class ContenderItem extends Component {
     }
 
     onUpdateStatusClicked(){
-        this.props.instance.registryBatchUpdateStatuses([this.props.item.contenderHash]);
+        this.props.instance.registryBatchUpdateStatuses([this.props.item.contenderHash])
+        .then((isTransaction) => {
+            this.props.toggleProcess(isTransaction);
+        });
     }
 
     onVoteUpClicked(){
@@ -35,8 +38,6 @@ class ContenderItem extends Component {
     }
 
     onRevealVoteUpClicked(){
-        console.log(this.props.item.challengeID);
-        console.log(this.state.salt)
         this.props.instance.PLCRRevealVote(this.props.item.challengeID, 1, this.state.salt)
         .then((isTransaction) => {
             this.props.toggleProcess(isTransaction);
@@ -68,30 +69,39 @@ class ContenderItem extends Component {
         let challengeButton = "";
         let updateButton = "";
         let votingButtons = "";
-        let applicationState = this.props.item.applicationExpiry;
         let commitState = "";
         let revealState = "";
+        let applicationState = this.props.item.applicationExpiry;
+        let hash = "";
 
-        if(this.props.item.isChampion === true) challengeState = "is already a champion!";
+        if(this.props.showHash){
+            hash = this.props.item.contenderHash;
+        }
+
+        if(this.props.item.isChampion === true) {
+            challengeState = "is already a champion!";
+            applicationState = "Challenge passed!"
+            challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Rechallenge!</button><br/></div>;
+        }
         else if(this.props.item.challengeID === 0) {
             if(this.props.item.applicationExpiry === "Process finished."){
                 challengeState = "is in pending state."
-                updateButton = <button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button>
+                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
             }
             else {
                 challengeState = "remains unchallenged."
-                challengeButton = <button onClick={this.onChallengeClicked.bind(this)}>Challenge!</button>
+                challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Challenge!</button><br/></div>;
             }
                                     
         }
-        else { //challenged
+        else { 
             applicationState = "";
             if(this.props.item.commitVoteExpiry === "Voting duration concluded." &&
                this.props.item.revealVoteExpiry === "Reveal duration concluded."){
                 challengeState = "is in pending state."
                 commitState = <div>{this.props.item.commitVoteExpiry}<br/></div>;
                 revealState = <div>{this.props.item.revealVoteExpiry}<br/></div>;
-                updateButton = <button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button>
+                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
             }
             else {
                 challengeState = "has been challenged!";
@@ -113,15 +123,13 @@ class ContenderItem extends Component {
                                 <button onClick={this.onRevealVoteDownClicked.bind(this)}>Vote Down</button>
                             </div>
                 }
-
-                
-                
             }
         }
 
     return (
         <div className="ContenderItem">
             <br/>
+            {hash}<br/>
             Challenge ID：{this.props.item.challengeID}     <br/>
             <strong>{this.props.item.contender}</strong> {challengeState} <br/>
             {applicationState}

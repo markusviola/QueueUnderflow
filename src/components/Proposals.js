@@ -8,53 +8,43 @@ class Proposals extends Component {
         super();
 
         this.state = {
-            currentProposals: []
+            currentProposals: [],
+            processStatus: false,
+            showHash: false
         }
     }
 
-    getProposalItems(){
-        this.props.instance.paramGetAllProposals()
-        .then((result) => {
-            setTimeout(()=>{
-
-                for(let i=0; i<result.length; i++){
-                    console.log("paramName: "+result[i].paramName);
-                    console.log("paramVal: "+result[i].paramVal);
-                    console.log("challengeID: "+result[i].challengeID);
-                    console.log("proposalExpiry: "+result[i].proposalExpiry);
-                    
-                    let updatedProposals = this.state.currentProposals;
-                    var expiration;
-                    var date1 = new Date(result[i].proposalExpiry*1000);
-                    var date2 = new Date();
-
-                    if(date2 > date1) expiration = "Process finished."
-                    else expiration = "Proposal expires "+moment(date1).from(date2)+".";
-
-                    updatedProposals.push({
-                        key: i+1,
-                        paramName: result[i].paramName,
-                        paramVal: result[i].paramVal,
-                        challengeID: result[i].challengeID,
-                        proposalExpiry: expiration,
-                    })
-                    this.setState({currentProposals: updatedProposals});
-                }
-            }, 1000)
-        });
-    }
     
-    componentDidMount(){
-        this.getProposalItems();
+
+    handleChallenge(_proposalID){
+        this.props.challengeClicked(_proposalID);
+    }
+
+    handleToggleProcess(isTransaction){
+        this.props.onProcess(isTransaction);
+    }
+
+    onShowHash(){
+        this.setState({
+            showHash: !this.state.showHash
+        })
     }
 
     render() {
         
+        let process = "";
+        let hashButton = "";
+        if(this.props.dataStatus === true){
+        process = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
+        }
+        if(this.props.dataStatus === false){
+            hashButton = <div><button onClick={this.onShowHash.bind(this)}>Toggle Hash</button><br/></div>;
+        }
         let items;
-        if(this.state.currentProposals){
-            items = this.state.currentProposals.map(item => {
+        if(this.props.currentProposals){
+            items = this.props.currentProposals.filter((item) => {return item.paramName === "" ? false: true}).map(item => {
                 return (
-                    <ProposalItem key={item.key} item = {item}/>
+                    <ProposalItem showHash = {this.state.showHash} toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} challengeClicked = {this.handleChallenge.bind(this)} key={item.key} item = {item}/>
                 )
             });
         }
@@ -62,6 +52,8 @@ class Proposals extends Component {
     return (
         <div className="Proposals">
             <h3>Proposals</h3>
+            {hashButton}
+            {process}
             {items}
         </div>
     );

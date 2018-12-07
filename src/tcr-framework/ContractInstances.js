@@ -1,9 +1,9 @@
 var contract = {
     ownerAddress: "0xDA1f876435f34756ACDA6492B1e061c31D1aE52D",
-    orchestratorAddress: "0x1c8c514b19e473490fdd2ea062df8c6c8960f524",
-    registryAddress:"0xb190f6955441071347935e9785b8e7621c4164ef",
-    parameterizerAddress: "0x91eeb6a939a951b5f634db0891055df6730a7a76",
-    plcrAddress: "0x1137bdea4d867ac1ce00b1edcc1bf8fdb28aa7b1",
+    orchestratorAddress: "0xc6f30489335870fc79f3290e205eda2f266542b6",
+    registryAddress:"0x71904F5f3DF384F78c5a1cEbF8787c095134Cf2C",
+    parameterizerAddress: "0x07e8F333526DbC518aa6390AA26Cd245514428a3",
+    plcrAddress: "0x5dEAA7874D3Ab13f53A51D7Ed6a9bfD60FA42021",
     registryABI: [
         {
             "constant": false,
@@ -54,6 +54,10 @@ var contract = {
                 {
                     "name": "_incentivePool",
                     "type": "uint256"
+                },
+                {
+                    "name": "_challenger",
+                    "type": "address"
                 }
             ],
             "payable": false,
@@ -830,6 +834,10 @@ var contract = {
                 {
                     "name": "_incentivePool",
                     "type": "uint256"
+                },
+                {
+                    "name": "_challenger",
+                    "type": "address"
                 }
             ],
             "payable": false,
@@ -2604,7 +2612,7 @@ var contract = {
             "stateMutability": "view",
             "type": "function"
         }
-    ] 
+    ]
 }
 
 export default contract;
