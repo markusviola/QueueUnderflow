@@ -13,7 +13,7 @@ class ProposalItem extends Component {
     }
 
     onChallengeClicked(){
-        this.props.challengeClicked(this.props.item.proposalID);
+        this.props.challengeClicked(this.props.item);
     }
 
     onUpdateStatusClicked(){
@@ -78,17 +78,17 @@ class ProposalItem extends Component {
             hash = this.props.item.proposalID;
         }
         if(this.props.item.isChampion === true) {
-            challengeState = "proposal already accepted!";
+            challengeState = "Proposal already accepted!";
             proposalState = "Challenge passed!"
             
         }
         else if(this.props.item.challengeID === 0) {
             if(this.props.item.proposalExpiry === "Process finished."){
-                challengeState = "proposal is in pending state."
+                challengeState = "Proposal is in pending state."
                 updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
             }
             else {
-                challengeState = "proposal remains unchallenged."
+                challengeState = "Proposal remains undisputed."
                 challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Challenge!</button><br/></div>;
             }
                                     
@@ -98,13 +98,13 @@ class ProposalItem extends Component {
             if(this.props.item.commitVoteExpiry === "Voting duration concluded." &&
                this.props.item.revealVoteExpiry === "Reveal duration concluded."){
 
-                challengeState = "proposal is in pending state."
+                challengeState = "Proposal is in pending state."
                 commitState = <div>{this.props.item.commitVoteExpiry}<br/></div>;
                 revealState = <div>{this.props.item.revealVoteExpiry}<br/></div>;
                 updateButton = <button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button>
             }
             else {
-                challengeState = "proposal has been challenged!";
+                challengeState = "Proposal has been challenged!";
                 commitState = this.props.item.commitVoteExpiry;
                 revealState = this.props.item.revealVoteExpiry;
 
@@ -131,7 +131,8 @@ class ProposalItem extends Component {
         <div className="ProposalItem">
             <br/>
             {hash}<br/>
-            <strong>{this.props.item.paramName}</strong> {challengeState} <br/>
+            <strong>{this.props.instance.getFullParamName(this.props.item.paramName)} ({this.props.item.paramName})</strong><br/>
+            {challengeState} <br/>
             Proposed Value: {this.props.item.paramVal}<br/>
             {proposalState}
             {commitState}

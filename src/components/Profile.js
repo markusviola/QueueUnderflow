@@ -3,6 +3,7 @@ import AsContenderChallengerItem from './ProfileComponents/AsContenderChallenger
 import AsProposalChallengerItem from './ProfileComponents/AsProposalChallengerItem';
 import AsContenderVoterItem from './ProfileComponents/AsContenderVoterItem';
 import AsProposalVoterItem from './ProfileComponents/AsProposalVoterItem';
+import AsChampionItem from './ProfileComponents/AsChampionItem';
 
 
 class Profile extends Component {
@@ -18,104 +19,190 @@ class Profile extends Component {
             challengedContendersStatus: false,
             challengedProposalsStatus: false,
             votedContendersStatus: false,
-            votedProposalsStatus: false     
+            votedProposalsStatus: false,
+            profileType: "Regular",
+            userChampions: [],
+            wonVotedContenders: [],
+            wonVotedProposals: []
         }
+    }
+
+    async determineUserType(){
+
+        let currentProfileType = this.state.profileType;
+
+        let champions = await this.props.currentContenders.filter((item) => {
+            return (item.contender === "" || (!item.isChampion || !(item.issuer === this.props.instance.getCurrentAccount()))) ? false: true})
+        
+        if(champions.length > 0) currentProfileType = "Champion";
+        else{
+            let tokenRights = await this.props.instance.PLCRGetVotingBalance();    
+            if(tokenRights > 0) {
+                currentProfileType = "Token Voter";
+            }
+        }
+        this.setState({userChampions: champions, profileType: currentProfileType}, ()=>{console.log(this.state.userChampions)})
+        
     }
 
     componentDidUpdate(prevProps){
-        if(!this.props.dataStatusA && !this.props.dataStatusB){
-            if((this.props.dataStatusA !== prevProps.dataStatusA) || (this.props.dataStatusB !== prevProps.dataStatusB)){
+        if(!this.props.dataStatusA && !this.props.dataStatusB && !this.props.dataStatusC && !this.props.dataStatusD){
+            if ((this.props.dataStatusA !== prevProps.dataStatusA) || 
+                (this.props.dataStatusB !== prevProps.dataStatusB) || 
+                (this.props.dataStatusC !== prevProps.dataStatusC) || 
+                (this.props.dataStatusD !== prevProps.dataStatusD)){
                 this.getVotedContenders();
                 this.getVotedProposals();
+                this.determineUserType();
             }
         }
     }
 
-    //OPTIMIZE THIS NO NEED OF REVEAL JUST RECYCLE CONTENDER/PROPOSAL ITEM CONDITIONS
-    async getVotedProposals(){
-        let updatedVotedProposals = []
-        for(let i=0; i<this.props.currentProposals.length; i++){
-
-            let proposal = this.props.currentProposals[i];
-            let didCommit = await this.props.instance.PLCRDidCommit(proposal.challengeID);
-            if((proposal.challengeID === 0 || proposal.challenger === "") || !didCommit) continue;
-            
-            let claimStatus = await this.props.instance.paramIncentiveClaimStatus(proposal.challengeID);
-
-            if(claimStatus === "Error") continue;
-            let winnings = 0;
-            
-            if(claimStatus === false){
-                winnings = await this.props.instance.paramViewVoterIncentive(proposal.challengeID);
-                if(winnings === "Error") continue;
-            }
-
-            updatedVotedProposals.push({
-                key: i+1,
-                proposalID: proposal.proposalID,
-                paramName: proposal.paramName,
-                paramVal: proposal.paramVal,
-                challengeID: proposal.challengeID,
-                proposalExpiry: proposal.proposalExpiry,
-                incentivePool: proposal.incentivePool,
-                isConcluded: proposal.isConcluded,
-                commitVoteExpiry: proposal.commitVoteExpiry,
-                revealVoteExpiry: proposal.revealVoteExpiry,
-                challenger: proposal.challenger,
-                wonTokens: winnings,
-                hasClaimedReward: claimStatus
-            });
-        }
-        this.setState({votedProposals: updatedVotedProposals, votedProposalsStatus: true}, () => {console.log(this.state.votedProposals)});
-    }
-
-    //OPTIMIZE THIS NO NEED OF REVEAL JUST RECYCLE CONTENDER/PROPOSAL ITEM CONDITION
     async getVotedContenders(){
         let updatedVotedContenders = []
-        for(let i=0; i<this.props.currentContenders.length; i++){
+        let wonIncentives = []
+        for(let i=0; i<this.props.currentContenderChallenges.length; i++){
 
-            let contender = this.props.currentContenders[i];
-            let didCommit = await this.props.instance.PLCRDidCommit(contender.challengeID);
-            if((contender.challengeID === 0 || contender.challenger === "") || !didCommit) continue;
+            let challenge = this.props.currentContenderChallenges[i];
+            let didCommit = await this.props.instance.PLCRDidCommit(challenge.challengeID);
+            if((challenge.challengeID === 0 || challenge.challenger === "") || !didCommit) continue;
 
-            let claimStatus = await this.props.instance.registryIncentiveClaimStatus(contender.challengeID);
+            let didReveal = await this.props.instance.PLCRDidReveal(challenge.challengeID);
+            let claimStatus = await this.props.instance.registryIncentiveClaimStatus(challenge.challengeID);
             if(claimStatus === "Error") continue;
+            let contender = "Contender Eliminated"
+            let contenderHash;
             let winnings = 0;
+            let isTokenLocked = false;
 
-            if(claimStatus === false){
-                winnings = await this.props.instance.registryViewVoterIncentive(contender.challengeID);
-                if(winnings === "Error") continue;
+            if(claimStatus === false && challenge.isConcluded){
+                winnings = await this.props.instance.registryViewVoterIncentive(challenge.challengeID);
+                if(winnings > 0) wonIncentives.push(challenge.challengeID);
+            }
+
+            for(let i=0; i<this.props.currentContenders.length; i++){
+                if(this.props.currentContenders[i].challengeID === challenge.challengeID){
+                    contender = this.props.currentContenders[i].contender;
+                    contenderHash = this.props.currentContenders[i].contenderHash;
+                }
+            }
+
+            let lastNode = await this.props.instance.PLCRGetLastNode();
+            if(lastNode === challenge.challengeID){
+                isTokenLocked = true;
             }
 
             updatedVotedContenders.push({
                 key: i+1,
-                contenderHash: contender.contenderHash,
-                contender: contender.contender,
-                issuer: contender.issuer,
-                isChampion: contender.isChampion,
-                challengeID: contender.challengeID,
-                applicationExpiry: contender.applicationExpiry,
-                incentivePool: contender.incentivePool,
-                isConcluded: contender.isConcluded,
-                commitVoteExpiry: contender.commitVoteExpiry,
-                commitVoteExpiry: contender.commitVoteExpiry,
-                challenger: contender.challenger,
+                contenderHash: contenderHash,
+                contender: contender,
+                challengeID: challenge.challengeID,
+                incentivePool: challenge.incentivePool,
+                isConcluded: challenge.isConcluded,
+                commitVoteExpiry: challenge.commitVoteExpiry,
+                revealVoteExpiry: challenge.revealVoteExpiry,
                 wonTokens: winnings,
-                hasClaimedReward: claimStatus
+                hasClaimedReward: claimStatus,
+                didReveal: didReveal,
+                isTokenLocked: isTokenLocked
             });
         }
-        this.setState({votedContenders: updatedVotedContenders, votedContendersStatus: true}, () => {console.log(this.state.votedContenders)});
+        this.setState({
+            votedContenders: updatedVotedContenders, 
+            votedContendersStatus: true,
+            wonVotedContenders: wonIncentives
+        }, () => {});
+    }
+
+    async getVotedProposals(){
+        let updatedVotedProposals = []
+        let wonIncentives = []
+        for(let i=0; i<this.props.currentProposalChallenges.length; i++){
+
+            let challenge = this.props.currentProposalChallenges[i];
+            let didCommit = await this.props.instance.PLCRDidCommit(challenge.challengeID);
+            if((challenge.challengeID === 0 || challenge.challenger === "") || !didCommit) continue;
+            
+            let didReveal = await this.props.instance.PLCRDidReveal(challenge.challengeID);
+            let claimStatus = await this.props.instance.paramIncentiveClaimStatus(challenge.challengeID);
+            if(claimStatus === "Error") continue;
+            let paramName = "Parameter Proposal Rejected"
+            let paramVal = "";
+            let proposalID;
+            let winnings = 0;
+            let isTokenLocked = false;
+            
+            if(claimStatus === false && challenge.isConcluded){
+                winnings = await this.props.instance.paramViewVoterIncentive(challenge.challengeID);
+                if(winnings > 0) wonIncentives.push(challenge.challengeID);
+            }
+            
+            for(let i=0; i<this.props.currentProposals.length; i++){
+                if(this.props.currentProposals[i].challengeID === challenge.challengeID){
+                    proposalID = this.props.currentProposals[i].proposalID;
+                    paramName = this.props.currentProposals[i].paramName;
+                    paramVal = this.props.currentProposals[i].paramVal;
+                }
+            }
+
+            let lastNode = await this.props.instance.PLCRGetLastNode();
+            if(lastNode === challenge.challengeID){
+                isTokenLocked = true;
+            }
+
+            updatedVotedProposals.push({
+                key: i+1,
+                proposalID: proposalID,
+                paramName: paramName,
+                paramVal: paramVal,
+                challengeID: challenge.challengeID,
+                incentivePool: challenge.incentivePool,
+                isConcluded: challenge.isConcluded,
+                commitVoteExpiry: challenge.commitVoteExpiry,
+                revealVoteExpiry: challenge.revealVoteExpiry,
+                wonTokens: winnings,
+                hasClaimedReward: claimStatus,
+                didReveal: didReveal,
+                isTokenLocked: isTokenLocked
+            });
+        }
+        this.setState({
+            votedProposals: updatedVotedProposals, 
+            votedProposalsStatus: true,
+            wonVotedProposals: wonIncentives
+        }, () => {});
     }
 
     componentDidMount(){
-        if(this.props.dataStatusA === false && this.props.dataStatusB === false){
+        if (this.props.dataStatusA === false && 
+            this.props.dataStatusB === false && 
+            this.props.dataStatusC === false && 
+            this.props.dataStatusD === false){
+
             this.getVotedContenders();
             this.getVotedProposals();
+            this.determineUserType();
         }
     }
 
     handleToggleProcess(isTransaction){
         this.props.onProcess(isTransaction);
+    }
+
+    collectContenderIncentives(){
+        this.props.instance.registryBatchClaimIncentives(this.state.wonVotedContenders)
+        .then((isTransaction) => {
+            this.props.onProcess(isTransaction);
+            this.setState({wonVotedContenders: []})
+        });
+    }
+
+    collectProposalIncentives(){
+        this.props.instance.paramBatchClaimIncentives(this.state.wonVotedProposals)
+        .then((isTransaction) => {
+            this.props.onProcess(isTransaction);
+            this.setState({wonVotedProposals: []})
+        });      
     }
 
     
@@ -124,7 +211,16 @@ class Profile extends Component {
         let processB = "";
         let processC = "";
         let processD = "";
+        let championHeader = "";
+        let proposalIncentivesButton = "";
+        let contenderIncentivesButton = "";
 
+        if(this.state.wonVotedContenders.length > 0) {
+            contenderIncentivesButton = <button onClick={this.collectContenderIncentives.bind(this)}>Collect Incentives</button>;
+        }
+        if(this.state.wonVotedProposals.length > 0) {
+            proposalIncentivesButton = <button onClick={this.collectProposalIncentives.bind(this)}>Collect Incentives</button>;
+        }
         
         if(this.props.dataStatusA === true){
             processA = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
@@ -137,6 +233,19 @@ class Profile extends Component {
         }
         if(this.state.votedProposalsStatus === false){
             processD = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
+        }
+        if(this.state.userChampions.length > 0){
+            
+            championHeader = <h3>Persona</h3>;
+        }
+
+        let items;
+        if(this.state.userChampions){
+            items = this.state.userChampions.map(item => {
+                return (
+                    <AsChampionItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={item.key} item = {item}/>
+                )
+            });
         }
 
         let itemsA;
@@ -181,6 +290,7 @@ class Profile extends Component {
             itemsD = this.state.votedProposals.map(itemD => {
                 return (
                     <AsProposalVoterItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={itemD.key} itemD = {itemD}/>
+                    
                 )
             });
         }
@@ -189,24 +299,30 @@ class Profile extends Component {
         <div className="Profile">
 
             <h3>Profile</h3>
+            <strong>User Type: {this.state.profileType}</strong><br/>
+            {championHeader}
+            {items}
+            
 
             <h3>Contenders</h3>
             
             <h4>Challenged:</h4>
             {processA}
             {itemsA}
-            
+
             <h4>Voted:</h4>
+            {contenderIncentivesButton}<br/><br/>
             {processB}
-            {itemsB}
+            {itemsC}
 
             <h3>Parameter Proposals</h3>
             
             <h4>Challenged:</h4>
             {processC}
-            {itemsC}
+            {itemsB}
 
             <h4>Voted:</h4>
+            {proposalIncentivesButton}<br/><br/>
             {processD}
             {itemsD}
             

@@ -9,7 +9,7 @@ class ProposalChallengerForm extends Component {
         this.state = {
             minDeposit: "Calculating...",
             statement: "",
-            proposalHash: ""
+            selectedProposal: {}
         }
     }
 
@@ -17,14 +17,13 @@ class ProposalChallengerForm extends Component {
         this.props.instance.paramGet("pMinDeposit")
         .then((_minDeposit)=>{
             this.setState({
-                minDeposit: _minDeposit,
-                proposalHash: this.props.predefinedHash
+                minDeposit: _minDeposit
             });
         })
     }
 
     handleSubmit(e){
-        this.props.instance.paramChallengeProposal(this.refs.hash.value)
+        this.props.instance.paramChallengeProposal(this.props.selectedProposal.proposalID)
         .then((isTransaction) => {
             this.props.onProcess(isTransaction);
         });
@@ -42,8 +41,8 @@ class ProposalChallengerForm extends Component {
             <h3>Challenge A Proposal!</h3>
             <form onSubmit={this.handleSubmit.bind(this)}>
                 <div style={{width: "300px"}}>
-                    <label>Proposal ID:</label><br/>
-                    <input type="text" ref="hash" value={this.state.proposalHash}/>
+                    <b><label>Parameter: {this.props.selectedProposal.paramName}</label></b><br/>
+                    <b><label>Proposed Value: {this.props.selectedProposal.paramVal}</label></b><br/><br/>
                 </div>
                 <div>
                     <label>Challenge Stake:</label><br/>

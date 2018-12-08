@@ -19,8 +19,18 @@ class AsProposalChallengerItem extends Component {
         
         if(this.props.itemB.commitVoteExpiry === "Voting duration concluded." &&
             this.props.itemB.revealVoteExpiry === "Reveal duration concluded."){
-            challengeStatus = <div>The voting is finished.<br/></div>
-            updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+                if(this.props.itemB.isConcluded){
+                    if(this.props.itemB.isChampion){
+                        challengeStatus = <div>You lost the challenge.<br/></div>
+                    }
+                    else{
+                        challengeStatus = <div>You won the challenge!<br/></div>
+                    }
+                }
+                else{
+                    challengeStatus = <div>The voting is finished.<br/></div>
+                    updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+                }
         }
         else{
             challengeStatus = <div>The voting is still on going.<br/></div>

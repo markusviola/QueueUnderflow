@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 class ChampionItem extends Component {
 
     onChallengeClicked(){
-        this.props.challengeClicked(this.props.item.contenderHash);
+        this.props.challengeClicked(this.props.item);
     }
 
     render() {

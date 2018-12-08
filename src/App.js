@@ -40,15 +40,21 @@ class App extends Component {
       currentContenders: [],
       proposalProcessStatus: false,
       currentProposals: [],
+      currentContenderChallenges: [],
+      contenderChallengesProcessStatus: false,
+      currentProposalChallenges: [],
+      proposalChallengesProcessStatus: false,
+      currentParameterizers: [],
+      parameterizersProcessStatus: false
     }
   }
 
   initEnvironment(){
     this.setState({ env: new augTCR()}, ()=>{
       this.state.env.setEnvironmentInstance(
-        contract.plcrAddress,
-        contract.parameterizerAddress,
-        contract.registryAddress)
+      contract.plcrAddress,
+      contract.parameterizerAddress,
+      contract.registryAddress)
       .then(()=>{
         this.setState({envStatus: true}, ()=>{
           this.setState({renderRegisterForm: true},()=>{
@@ -59,10 +65,9 @@ class App extends Component {
               this.initEventWatchers();
               this.retrieveData();
               
-              
             });
-          })
-        })
+          });
+        });
       });
     });
   }
@@ -74,28 +79,44 @@ class App extends Component {
     this.setState({proposalProcessStatus: true},() =>{
       this.getProposalItems();     
     })
+    this.setState({contenderChallengesProcessStatus: true},() =>{
+      this.getContenderChallengeItems();     
+    })
+    this.setState({proposalChallengesProcessStatus: true},() =>{
+      this.getProposalChallengeItems();     
+    })
+    this.setState({parameterizersProcessStatus: true},() =>{
+      this.getParameterizerItems();     
+    })
   }
 
   initEventWatchers(){
     
-    this.state.env.PLCROperationEvent().then((result)=>{console.log("PLCR"); this.hideProcess(result[0],result[1])});
+    this.state.env.PLCROperationEvent().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.PLCRVoteCommited().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.PLCRVoteRevealed().then((result)=>{this.hideProcess(result[0],result[1])});
-
-
-    this.state.env.registryOperationEvent().then((result)=>{console.log("REGISTRY"); this.hideProcess(result[0],result[1])});
+    this.state.env.PLCRTokensRescued().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.PLCRVotingRightsWithdrawn().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.PLCRVotingRightsGranted().then((result)=>{this.hideProcess(result[0],result[1])});
+    
+  
+    this.state.env.registryOperationEvent().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.registryNewContender().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.registryNewChallenge().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.registryChallengerWon().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.registryChallengerLost().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.registryTouchedAndRemoved().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.registryWithdrawalEvent().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.registryDepositEvent().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.registryIncentiveClaimed().then((result)=>{this.hideProcess(result[0],result[1])});
 
 
-    this.state.env.paramOperationEvent().then((result)=>{console.log("PARAMETERIZER");this.hideProcess(result[0],result[1])});
+    this.state.env.paramOperationEvent().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.paramNewProposal().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.paramNewProposalChallenge().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.paramPChallengerWon().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.paramPChallengerLost().then((result)=>{this.hideProcess(result[0],result[1])});
+    this.state.env.paramIncentiveClaimed().then((result)=>{this.hideProcess(result[0],result[1])});
     
   }
 
@@ -103,11 +124,9 @@ class App extends Component {
     this.state.env.registryGetAllContenders()
       .then(
           async (result) => {
-          let updatedContenders = this.state.currentContenders;
+          let updatedContenders = []
 
           for(let i=0; i<result.length; i++){
-
-              // if(result[i].desc === "") continue;
 
               var incentivePool = "N/A";
               var isConcluded = "N/A";
@@ -129,10 +148,10 @@ class App extends Component {
                   var revealEndDate = new Date(challengeInfo.revealEndDate*1000);
 
                   if(now > commitEndDate) commitState = "Voting duration concluded."
-                  else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+". Keep voting!"}<br/></div>;
+                  else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
 
                   if(now > revealEndDate) revealState = "Reveal duration concluded."
-                  else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+". Confirm now!"}<br/></div>;
+                  else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
 
                   incentivePool = challengeInfo.incentivePool;
                   isConcluded = challengeInfo.isConcluded;
@@ -154,8 +173,44 @@ class App extends Component {
                   challenger: challenger
               })
           }
-
+          
           this.setState({currentContenders: updatedContenders, contenderProcessStatus: false},() => {});
+      });
+  }
+
+  async getContenderChallengeItems(){
+    this.state.env.registryGetAllChallenges()
+      .then(
+          async (result) => {
+
+          let updatedContenderChallenges = [];
+
+          for(let i=0; i<result.length; i++){
+
+              var commitState = "N/A";
+              var revealState = "N/A";
+
+              var now = new Date();
+              var commitEndDate = new Date(result[i].commitEndDate*1000);
+              var revealEndDate = new Date(result[i].revealEndDate*1000);
+
+              if(now > commitEndDate) commitState = "Voting duration concluded."
+              else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
+
+              if(now > revealEndDate) revealState = "Reveal duration concluded."
+              else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
+
+              updatedContenderChallenges.push({
+                  key: i+1,
+                  challengeID: result[i].challengeID,
+                  incentivePool: result[i].incentivePool,
+                  isConcluded: result[i].isConcluded,
+                  commitVoteExpiry: commitState,
+                  revealVoteExpiry: revealState
+              })
+          }
+
+          this.setState({currentContenderChallenges: updatedContenderChallenges, contenderChallengesProcessStatus: false},() => {});
       });
   }
 
@@ -163,7 +218,7 @@ class App extends Component {
       this.state.env.paramGetAllProposals()
       .then(
           async (result) => {
-          let updatedProposals = this.state.currentProposals;
+          let updatedProposals = [];
           for(let i=0; i<result.length; i++){
               
 
@@ -187,10 +242,10 @@ class App extends Component {
                   var revealEndDate = new Date(challengeInfo.revealEndDate*1000);
 
                   if(now > commitEndDate) commitState = "Voting duration concluded."
-                  else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+". Keep voting!"}<br/></div>;
+                  else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
 
                   if(now > revealEndDate) revealState = "Reveal duration concluded."
-                  else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+". Confirm now!"}<br/></div>;
+                  else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
 
                   incentivePool = challengeInfo.incentivePool;
                   isConcluded = challengeInfo.isConcluded;
@@ -217,9 +272,61 @@ class App extends Component {
       });
   }  
 
+  async getProposalChallengeItems(){
+    this.state.env.paramGetAllChallenges()
+      .then(
+          async (result) => {
+          let updatedProposalChallenges = [];
+
+          for(let i=0; i<result.length; i++){
+
+              var commitState = "N/A";
+              var revealState = "N/A";
+
+              var now = new Date();
+              var commitEndDate = new Date(result[i].commitEndDate*1000);
+              var revealEndDate = new Date(result[i].revealEndDate*1000);
+
+              if(now > commitEndDate) commitState = "Voting duration concluded."
+              else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
+
+              if(now > revealEndDate) revealState = "Reveal duration concluded."
+              else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
+              
+              updatedProposalChallenges.push({
+                  key: i+1,
+                  challengeID: result[i].challengeID,
+                  incentivePool: result[i].incentivePool,
+                  isConcluded: result[i].isConcluded,
+                  commitVoteExpiry: commitState,
+                  revealVoteExpiry: revealState
+              })
+          }
+
+          this.setState({currentProposalChallenges: updatedProposalChallenges, proposalChallengesProcessStatus: false},() => {});
+      });
+  }
+
+  async getParameterizerItems(){
+    this.state.env.paramGetAllParameterizers()
+    .then((result) => {
+        let updatedParameterizers = [];
+        for(let i=0; i<result.length; i++){
+            updatedParameterizers.push({
+                key: i+1,
+                paramName: result[i].paramName,
+                paramVal: result[i].paramVal
+            })
+            
+        }
+        this.setState({currentParameterizers: updatedParameterizers, parameterizersProcessStatus: false});
+    });
+  }
+
   hideProcess(result,message){
     if(result){
       alert(message);
+      this.retrieveData();
     }
     else alert(message);
     
@@ -303,17 +410,17 @@ class App extends Component {
     })
   }
 
-  handleChallenge(_contenderHash){
+  handleChallenge(contender){
     this.setState({
-      selectedContender: _contenderHash
+      selectedContender: contender
     },() => {
       this.renderComponent("challengerForm");
     })
   }
 
-  handleProposalChallenge(_proposalID){
+  handleProposalChallenge(proposal){
     this.setState({
-      selectedProposal: _proposalID
+      selectedProposal: proposal
     },() => {
       this.renderComponent("proposalChallengerForm");
     })
@@ -338,21 +445,21 @@ class App extends Component {
     let renderProfile = "";
 
     if(this.state.renderRegisterForm) renderRegisterForm = <RegisterForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
-    else if(this.state.renderChallengerForm) renderChallengerForm = <ChallengerForm predefinedHash = {this.state.selectedContender} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
+    else if(this.state.renderChallengerForm) renderChallengerForm = <ChallengerForm selectedContender = {this.state.selectedContender} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderProposalForm) renderProposalForm = <ProposalForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
-    else if(this.state.renderProposalChallengerForm) renderProposalChallengerForm = <ProposalChallengerForm predefinedHash = {this.state.selectedProposal} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
+    else if(this.state.renderProposalChallengerForm) renderProposalChallengerForm = <ProposalChallengerForm selectedProposal = {this.state.selectedProposal} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderChampions) renderChampions = <Champions currentContenders = {this.state.currentContenders} dataStatus = {this.state.contenderProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderContenders) renderContenders = <Contenders currentContenders = {this.state.currentContenders} dataStatus = {this.state.contenderProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
-    else if(this.state.renderParameterizers) renderParameterizers = <Parameterizers instance = {this.state.env}/>
-    else if(this.state.renderProfile) renderProfile = <Profile onProcess = {this.toggleProcess.bind(this)} currentProposals = {this.state.currentProposals} dataStatusB = {this.state.proposalProcessStatus} currentContenders = {this.state.currentContenders} dataStatusA = {this.state.contenderProcessStatus} instance = {this.state.env}/>
+    else if(this.state.renderParameterizers) renderParameterizers = <Parameterizers currentParameterizers = {this.state.currentParameterizers} dataStatus = {this.state.parameterizersProcessStatus} instance = {this.state.env}/>
+    else if(this.state.renderProfile) renderProfile = <Profile onProcess = {this.toggleProcess.bind(this)} currentContenderChallenges = {this.state.currentContenderChallenges} currentProposalChallenges = {this.state.currentProposalChallenges} currentProposals = {this.state.currentProposals} dataStatusB = {this.state.proposalProcessStatus} currentContenders = {this.state.currentContenders} dataStatusA = {this.state.contenderProcessStatus} dataStatusC = {this.state.contenderChallengesProcessStatus} dataStatusD = {this.state.proposalChallengesProcessStatus} instance = {this.state.env}/>
     else if(this.state.renderProposals) renderProposals = <Proposals currentProposals = {this.state.currentProposals} dataStatus = {this.state.proposalProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleProposalChallenge.bind(this)} instance = {this.state.env}/>
 
     return (
       <div className="App" style={{float:"left", textAlign: "left"}}>
-        <strong>Augmented TCR</strong><br/>
+        <strong>StackOverflow</strong><br/>
         {process}<br/>
        
-        <form onSubmit={this.handleSubmit.bind(this)}>        
+        {/* <form onSubmit={this.handleSubmit.bind(this)}>        
           Token Faucet:
           <div>
               <label>Amount</label> <input type="text" ref="amount" />
@@ -363,7 +470,7 @@ class App extends Component {
 
         <button onClick={this.onGetVotingBalance.bind(this)}>Get Balance</button>
         <br/>
-        <br/>
+        <br/> */}
         Expire Stage Duration: 
         <div style={{display:"flex",justifyContent:"space-between", width: "630px"}}>
           <input type="text" placeholder="Contender or Proposal ID" onChange={this.onHashChange.bind(this)}/>
@@ -382,7 +489,7 @@ class App extends Component {
           <button onClick={this.renderComponent.bind(this, "parameterizers")}>Parameterizers</button>
           <button onClick={this.renderComponent.bind(this, "proposals")}>Proposals</button>
           <button onClick={this.renderComponent.bind(this, "profile")}>Profile</button>
-          {/* <button onClick={this.retrieveData()}>Refresh Data</button> */}
+          <button onClick={this.retrieveData.bind(this)}>Refresh</button>
         </div>
         
         {renderRegisterForm}

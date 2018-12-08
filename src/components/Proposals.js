@@ -16,8 +16,8 @@ class Proposals extends Component {
 
     
 
-    handleChallenge(_proposalID){
-        this.props.challengeClicked(_proposalID);
+    handleChallenge(proposal){
+        this.props.challengeClicked(proposal);
     }
 
     handleToggleProcess(isTransaction){

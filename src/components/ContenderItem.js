@@ -13,7 +13,7 @@ class ContenderItem extends Component {
     }
 
     onChallengeClicked(){
-        this.props.challengeClicked(this.props.item.contenderHash);
+        this.props.challengeClicked(this.props.item);
     }
 
     onUpdateStatusClicked(){
@@ -78,7 +78,7 @@ class ContenderItem extends Component {
             hash = this.props.item.contenderHash;
         }
 
-        if(this.props.item.isChampion === true) {
+        if(this.props.item.isChampion === true && this.props.item.isConcluded) {
             challengeState = "is already a champion!";
             applicationState = "Challenge passed!"
             challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Rechallenge!</button><br/></div>;
@@ -108,7 +108,7 @@ class ContenderItem extends Component {
                 commitState = this.props.item.commitVoteExpiry;
                 revealState = this.props.item.revealVoteExpiry;
                 if(this.props.item.commitVoteExpiry !== "Voting duration concluded."){
-                    revealState = "Reveal: Commences after voting stage.";
+                    revealState = "Reveal commences after voting stage.";
                     votingButtons = <div style={{display: "flex", justifyContent: "flex-start", width: "400px"}}>
                                 <input type="number" placeholder="Salt" style={{width: "50px"}} onChange={this.onSaltChange.bind(this)}/>
                                 <input type="number" placeholder="No. of Votes to Stake" style={{width: "100"}} onChange={this.onTokenAmountChange.bind(this)}/>

@@ -4,8 +4,8 @@ import ChampionItem from './ChampionItem';
 
 class Champions extends Component {
     
-    handleChallenge(_contenderHash){
-        this.props.challengeClicked(_contenderHash);
+    handleChallenge(contender){
+        this.props.challengeClicked(contender);
     }
 
     render() {

@@ -10,7 +10,6 @@ class AsContenderChallengerItem extends Component {
         });
     }
 
-    
     render() {
         let challengeStatus = "";
         let updateButton = "";
@@ -19,8 +18,19 @@ class AsContenderChallengerItem extends Component {
         
         if(this.props.itemA.commitVoteExpiry === "Voting duration concluded." &&
             this.props.itemA.revealVoteExpiry === "Reveal duration concluded."){
-            challengeStatus = <div>The voting is finished.<br/></div>
-            updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+            
+            if(this.props.itemA.isConcluded){
+                if(this.props.itemA.isChampion){
+                    challengeStatus = <div>You lost the challenge.<br/></div>
+                }
+                else{
+                    challengeStatus = <div>You won the challenge!<br/></div>
+                }
+            }
+            else{
+                challengeStatus = <div>The voting is finished.<br/></div>
+                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+            }
         }
         else{
             challengeStatus = <div>The voting is still on going.<br/></div>

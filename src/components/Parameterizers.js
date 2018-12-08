@@ -7,42 +7,21 @@ class Parameterizers extends Component {
     constructor(){
         super();
 
-        this.state = {
-            currentParameterizers: []
-        }
-    }
-
-    getProposalItems(){
-        this.props.instance.paramGetAllParameterizers()
-        .then((result) => {
-            setTimeout(()=>{
-
-                for(let i=0; i<result.length; i++){
-                    
-                    let updatedParameterizers = this.state.currentParameterizers;
-
-                    updatedParameterizers.push({
-                        key: i+1,
-                        paramName: result[i].paramName,
-                        paramVal: result[i].paramVal
-                    })
-                    this.setState({currentParameterizers: updatedParameterizers});
-                }
-            }, 1000)
-        });
-    }
-    
-    componentDidMount(){
-        this.getProposalItems();
     }
 
     render() {
+
+        let process = "";
+
+        if(this.props.dataStatus === true){
+            process = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
+        }
         
         let items;
-        if(this.state.currentParameterizers){
-            items = this.state.currentParameterizers.map(item => {
+        if(this.props.currentParameterizers){
+            items = this.props.currentParameterizers.map(item => {
                 return (
-                    <ParameterizerItem key={item.key} item = {item}/>
+                    <ParameterizerItem instance = {this.props.instance} key={item.key} item = {item}/>
                 )
             });
         }
@@ -50,6 +29,7 @@ class Parameterizers extends Component {
     return (
         <div className="Parameterizers">
             <h3>Parameterizers</h3>
+            {process}
             {items}
         </div>
     );

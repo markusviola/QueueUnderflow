@@ -21,6 +21,21 @@ class AugTCR {
             "pVoteQuorum"
         ]
 
+        this.parameNamesFull = [
+            "Minimum Deposit",
+            "System Minimum Deposit", 
+            "Apply Stage Length", 
+            "System Apply Stage Length", 
+            "Commit Stage Length", 
+            "System Commit Stage Length",
+            "Reveal Stage Length",
+            "System Reveal Stage Length",
+            "Dispensation Percentage",
+            "System Dispensation Percentage",
+            "Vote Quorum",
+            "System Vote Quorum"
+        ]
+
         //Initializes the Web3 connection instance.
         if(typeof window.web3 != 'undefined'){
             console.log("Using web3 detected from external source like Metamask");
@@ -44,6 +59,17 @@ class AugTCR {
 
     getCurrentAccount(){
         return window.web3.eth.accounts[0];
+    }
+
+    getFullParamName(_paramName){
+        let shortParams = this.paramNames;
+        for(let i=0; i<shortParams.length; i++){
+            if(shortParams[i] === _paramName){
+                _paramName = this.parameNamesFull[i];
+            }
+        }
+        
+        return _paramName;
     }
 
     //Events
@@ -74,6 +100,39 @@ class AugTCR {
             this.plcrInstance._VoteRevealed().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Revealed vote!"]);
+                }
+                else resolve([false, "Transaction failed."]);
+            })
+        }); 
+    }
+
+    PLCRVotingRightsGranted(){
+        return new Promise((resolve)=>{
+            this.plcrInstance._VotingRightsGranted().watch((error, result)=>{
+                if(!error) {
+                    resolve([true,"Voting rights granted!"]);
+                }
+                else resolve([false, "Transaction failed."]);
+            })
+        }); 
+    }
+
+    PLCRVotingRightsWithdrawn(){
+        return new Promise((resolve)=>{
+            this.plcrInstance._VotingRightsWithdrawn().watch((error, result)=>{
+                if(!error) {
+                    resolve([true,"Voting rights withdrawn!"]);
+                }
+                else resolve([false, "Transaction failed."]);
+            })
+        }); 
+    }
+
+    PLCRTokensRescued(){
+        return new Promise((resolve)=>{
+            this.plcrInstance._TokensRescued().watch((error, result)=>{
+                if(!error) {
+                    resolve([true,"Tokens has been rescued!"]);
                 }
                 else resolve([false, "Transaction failed."]);
             })
@@ -135,6 +194,17 @@ class AugTCR {
         }); 
     }
 
+    paramIncentiveClaimed(){
+        return new Promise((resolve) => {
+            this.parameterizerInstance.IncentiveClaimed().watch((error, result)=>{
+                if(!error) {
+                    resolve([true, "A contender reward was claimed!"]);
+                }
+                else resolve([false, "Transaction failed."]);
+            })
+        })
+    }
+
     registryChallengerWon(){
         return new Promise((resolve)=>{
             this.registryInstance.ChallengerWon().watch((error, result)=>{
@@ -184,7 +254,7 @@ class AugTCR {
         return new Promise((resolve)=>{
             this.registryInstance.Deposit().watch((error, result)=>{
                 if(!error) {
-                    resolve([true, "A contender has Deposited tokens!"]);
+                    resolve([true, "A contender has deposited tokens!"]);
                 }
                 else resolve([false, "Transaction failed!"]);
             })
@@ -223,6 +293,19 @@ class AugTCR {
             })
         })
     }
+
+    registryIncentiveClaimed(){
+        return new Promise((resolve) => {
+            this.registryInstance.IncentiveClaimed().watch((error, result)=>{
+                if(!error) {
+                    resolve([true, "A contender reward was claimed!"]);
+                }
+                else resolve([false, "Transaction failed."]);
+            })
+        })
+    }
+
+    
 
 
     //Environment Builder
@@ -319,26 +402,38 @@ class AugTCR {
     }
 
     PLCRRequestVotingRights(_numTokens){
-        this.plcrInstance.requestVotingRights(_numTokens,
-            {gas: 300000, from: this.getCurrentAccount()},
-            (err, result) => {
-                alert("Transaction Successful!");
-            }
-        );
+        return new Promise((resolve) => {
+            this.plcrInstance.requestVotingRights(_numTokens,
+                {gas: 300000, from: this.getCurrentAccount()},
+                (err, result) => {
+                    if(typeof result === 'undefined'){
+                        resolve(false)
+                    }
+                    else resolve(true)
+                }
+            );
+        })
     }
 
     PLCRWithdrawVotingRights(_numTokens) {
-        this.plcrInstance.withdrawVotingRights(_numTokens,
-            {gas: 300000, from: this.getCurrentAccount()},
-            (err, result) => {
-                alert("Transaction Successful!");
-            }
-        );
+        return new Promise((resolve) => {
+            this.plcrInstance.withdrawVotingRights(_numTokens,
+                {gas: 300000, from: this.getCurrentAccount()},
+                (err, result) => {
+                    if(typeof result === 'undefined'){
+                        resolve(false)
+                    }
+                    else resolve(true)
+                }
+            );
+        })
     }
+
+    
     
     PLCRCommitVote(_pollID, _voteOption, _salt, _numTokens){
         return new Promise((resolve) => {
-            this.plcrInstance.commitVote(_pollID, Web3Utils.soliditySha3(parseInt(_voteOption) ,parseInt(_salt)), _numTokens, 0,
+            this.plcrInstance.commitVote(_pollID, Web3Utils.soliditySha3(parseInt(_voteOption) ,parseInt(_salt)), parseInt(_numTokens), 0,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
@@ -349,20 +444,6 @@ class AugTCR {
             );
         })
         
-    }
-
-    PLCRRevealVote(_pollID, _voteOption, _salt){
-        return new Promise((resolve) => {
-            this.plcrInstance.revealVote(_pollID, _voteOption, _salt,
-                {gas: 3000000, from: this.getCurrentAccount()},
-                (err, result) => {
-                    if(typeof result === 'undefined'){
-                        resolve(false)
-                    }
-                    else resolve(true)
-                }
-            );
-        })
     }
 
     PLCRRevealVote(_pollID, _voteOption, _salt){
@@ -404,6 +485,33 @@ class AugTCR {
             );
         });
     }
+    
+    PLCRRescueTokens(_challengeID){
+        return new Promise((resolve) => {
+            this.plcrInstance.rescueTokens(_challengeID,
+                (err, result) => {
+                    if(typeof result === 'undefined'){
+                        resolve(false)
+                    }
+                    else resolve(true)
+                }
+            );
+        });
+    }
+
+    PLCRGetLastNode(){
+        return new Promise((resolve) => {
+            this.plcrInstance.getLastNode(this.getCurrentAccount(),
+                (err, result) => {
+                    if(typeof result === 'undefined'){
+                        resolve("Error")
+                    }
+                    else resolve(result.c[0])
+                }
+            );
+        });
+    }
+    
 
     PLCRAAAExpireCommitDuration(_pollID){
         return new Promise((resolve) => {
@@ -436,7 +544,7 @@ class AugTCR {
     //Registry Functions
     registryRegister(_desc, _amount, _extra){
         return new Promise((resolve) => {
-            this.registryInstance.register(window.web3.sha3((this.getCurrentAccount()+_desc+_extra)), _amount, _desc, _extra,
+            this.registryInstance.register(window.web3.sha3((this.getCurrentAccount()+_desc+_extra)), parseInt(_amount), _desc, _extra,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
@@ -559,6 +667,22 @@ class AugTCR {
                 }
             );
         })
+    }
+
+    registryGetContenderStake(_contenderHash){
+        return new Promise((resolve) => {
+            this.registryInstance.contenders(_contenderHash,
+                {gas: 3000000, from: this.getCurrentAccount()},
+                    (err, result) => {
+                        if(typeof result === 'undefined'){
+                            resolve("Error");
+                        }
+                        resolve(result[4].c[0]);
+                    }
+                )
+            }
+        )
+        
     }
     
     registryGetContenderNonce() {
@@ -781,31 +905,27 @@ class AugTCR {
         });
     }
 
-    paramGetAllParameterizers(){
-
-        return new Promise((resolve) => {
-            let parameterizers = []
-            
-            for(let i = 0; i<this.paramNames.length; i++){
+    async paramGetAllParameterizers(){
+        let parameterizers = []
+        for(let i = 0; i<this.paramNames.length; i++){
+            await new Promise((resolve) => {
                 this.parameterizerInstance.get(this.paramNames[i],
                     (err, result) => {
                         parameterizers.push({
                             paramName: this.paramNames[i],
                             paramVal: result.c[0]
                         });
+                        resolve()
                     }
                 );
-                if(i === this.paramNames.length - 1){
-                    resolve(parameterizers);
-                }
-            }     
-        });    
+            }) 
+        }    
+        return parameterizers;
     }
 
     paramGetProposalNonce() {
         this.parameterizerInstance.getProposalNonce(
             (err, result) => {
-                console.log(result);
                 return result;
             }
         );   
@@ -925,7 +1045,6 @@ class AugTCR {
         }
     }
 
-    //0xd5f3f6886d868ff090345b0f85d2bf2bc89f369d98bcabf2dfdb0b69d4586639
     paramAAAExpireProposal(_proposalID){
         return new Promise((resolve) => {
             this.parameterizerInstance.AAAexpireProposal(_proposalID,

@@ -8,8 +8,7 @@ class ChallengerForm extends Component {
 
         this.state = {
             minDeposit: "Calculating...",
-            statement: "",
-            contenderHash: ""
+            statement: ""
         }
     }
 
@@ -18,13 +17,12 @@ class ChallengerForm extends Component {
         .then((_minDeposit)=>{
             this.setState({
                 minDeposit: _minDeposit,
-                contenderHash: this.props.predefinedHash
             });
         })
     }
 
     handleSubmit(e){
-        this.props.instance.registryChallenge(this.refs.hash.value, this.state.statement)
+        this.props.instance.registryChallenge(this.props.selectedContender.contenderHash, this.state.statement)
         .then((isTransaction) => {
             this.props.onProcess(isTransaction);
         });
@@ -42,8 +40,7 @@ class ChallengerForm extends Component {
             <h3>Challenge A Contender!</h3>
             <form onSubmit={this.handleSubmit.bind(this)}>
                 <div style={{width: "300px"}}>
-                    <label>Contender ID:</label><br/>
-                    <input type="text" ref="hash" value={this.state.contenderHash}/>
+                    <b><label>You are challenging {this.props.selectedContender.contender}!</label></b><br/><br/>
                 </div>
                 <div>
                     <label>Challenge Stake:</label><br/>

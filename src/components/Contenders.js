@@ -11,8 +11,8 @@ class Contenders extends Component {
         }
     }
 
-    handleChallenge(_contenderHash){
-        this.props.challengeClicked(_contenderHash);
+    handleChallenge(contender){
+        this.props.challengeClicked(contender);
     }
 
     handleToggleProcess(isTransaction){
