@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import axios from 'axios';
 
 class AnswerForm extends Component {
 
@@ -7,6 +7,7 @@ class AnswerForm extends Component {
         super();
 
         this.state = {
+            statement: ""
         }
     }
 
@@ -14,9 +15,22 @@ class AnswerForm extends Component {
     }
 
     handleSubmit(e){
+        const que = {
+            answer: this.state.statement,
+            answeredBy: this.props.instance.getCurrentAccount(),
+            answeredByName: "Test",
+            question_id: this.props.questionID
+
+        };
+
+        axios.post(`http://localhost:5000/api/answer/create`, que)
+        .then(res => {
+            alert(res.data);
+        })
+        e.preventDefault();
     }
 
-    onQuestionChange(evt){
+    onAnswerChange(evt){
         this.setState({statement: evt.target.value})
     }
     
@@ -26,8 +40,8 @@ class AnswerForm extends Component {
         <div className="AnswerForm">
             <form onSubmit={this.handleSubmit.bind(this)}>
                 <div>
-                    <label>Answer:</label><br/>
-                    <textarea onChange={this.onQuestionChange.bind(this)} placeholder="Input your question" style={{width:"650px", height:"270px"}} />
+                    <label>Give your answer:</label><br/>
+                    <textarea onChange={this.onAnswerChange.bind(this)} placeholder="Input your answer..." style={{width:"650px", height:"190px"}} />
                 </div>
                 <br/>
                 <button type="submit">Submit</button>

@@ -12,6 +12,10 @@ import Proposals from './components/Proposals';
 import Profile from './components/Profile';
 import moment from 'moment';
 import contract from './tcr-framework/ContractInstances';
+import QuestionForm from './components/Q&A/QuestionForm';
+import Questions from './components/Q&A/Questions';
+import Question from './components/Q&A/Question';
+import { runInThisContext } from 'vm';
 
 class App extends Component {
 
@@ -25,6 +29,7 @@ class App extends Component {
       challengeID: 0,
       selectedContender: "",
       selectedProposal: "",
+      selectedQuestion: 0,
 
       renderRegisterForm: false,
       renderChallengerForm: false,
@@ -35,6 +40,9 @@ class App extends Component {
       renderParameterizers: false,
       renderProposals: false,
       renderProfile: false,
+      renderQuestion: false,
+      renderQuestions: false,
+      renderQuestionForm: false,
 
       contenderProcessStatus: false,
       currentContenders: [],
@@ -45,7 +53,8 @@ class App extends Component {
       currentProposalChallenges: [],
       proposalChallengesProcessStatus: false,
       currentParameterizers: [],
-      parameterizersProcessStatus: false
+      parameterizersProcessStatus: false,
+
     }
   }
 
@@ -407,6 +416,9 @@ class App extends Component {
       renderParameterizers: "parameterizers" === value ? true : false,
       renderProposals: "proposals" === value ? true : false,
       renderProfile: "profile" === value ? true : false,
+      renderQuestions: "questions" === value ? true : false,
+      renderQuestionForm: "questionForm" === value ? true : false,
+      renderQuestion: "question" === value ? true : false
     })
   }
 
@@ -423,6 +435,14 @@ class App extends Component {
       selectedProposal: proposal
     },() => {
       this.renderComponent("proposalChallengerForm");
+    })
+  }
+
+  handleQuestion(questionID){
+    this.setState({
+      selectedQuestion: questionID
+    },() => {
+      this.renderComponent("question")
     })
   }
 
@@ -443,8 +463,14 @@ class App extends Component {
     let renderParameterizers = "";
     let renderProposals = "";
     let renderProfile = "";
+    let renderQuestionForm ="";
+    let renderQuestions = "";
+    let renderQuestion = "";
 
     if(this.state.renderRegisterForm) renderRegisterForm = <RegisterForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
+    else if(this.state.renderQuestionForm) renderQuestionForm = <QuestionForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
+    else if(this.state.renderQuestions) renderQuestions = <Questions handleQuestion = {this.handleQuestion.bind(this)} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
+    else if(this.state.renderQuestion) renderQuestion = <Question currentContenders = {this.state.currentContenders} selectedQuestion = {this.state.selectedQuestion} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderChallengerForm) renderChallengerForm = <ChallengerForm selectedContender = {this.state.selectedContender} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderProposalForm) renderProposalForm = <ProposalForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderProposalChallengerForm) renderProposalChallengerForm = <ProposalChallengerForm selectedProposal = {this.state.selectedProposal} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
@@ -459,18 +485,6 @@ class App extends Component {
         <strong>StackOverflow</strong><br/>
         {process}<br/>
        
-        {/* <form onSubmit={this.handleSubmit.bind(this)}>        
-          Token Faucet:
-          <div>
-              <label>Amount</label> <input type="text" ref="amount" />
-          </div>
-          <br/>
-            <button type="submit">Buy Token!</button>
-        </form>    
-
-        <button onClick={this.onGetVotingBalance.bind(this)}>Get Balance</button>
-        <br/>
-        <br/> */}
         Expire Stage Duration: 
         <div style={{display:"flex",justifyContent:"space-between", width: "630px"}}>
           <input type="text" placeholder="Contender or Proposal ID" onChange={this.onHashChange.bind(this)}/>
@@ -489,6 +503,8 @@ class App extends Component {
           <button onClick={this.renderComponent.bind(this, "parameterizers")}>Parameterizers</button>
           <button onClick={this.renderComponent.bind(this, "proposals")}>Proposals</button>
           <button onClick={this.renderComponent.bind(this, "profile")}>Profile</button>
+          <button onClick={this.renderComponent.bind(this, "questions")}>Question List</button>
+          <button onClick={this.renderComponent.bind(this, "questionForm")}>Ask Question</button>
           <button onClick={this.retrieveData.bind(this)}>Refresh</button>
         </div>
         
@@ -501,6 +517,9 @@ class App extends Component {
         {renderParameterizers}
         {renderProposals}
         {renderProfile}
+        {renderQuestions}
+        {renderQuestionForm}
+        {renderQuestion}
         
       </div>
     );
@@ -508,3 +527,22 @@ class App extends Component {
 }
 
 export default App;
+
+
+
+
+
+
+
+        {/* <form onSubmit={this.handleSubmit.bind(this)}>        
+          Token Faucet:
+          <div>
+              <label>Amount</label> <input type="text" ref="amount" />
+          </div>
+          <br/>
+            <button type="submit">Buy Token!</button>
+        </form>    
+
+        <button onClick={this.onGetVotingBalance.bind(this)}>Get Balance</button>
+        <br/>
+        <br/> */}

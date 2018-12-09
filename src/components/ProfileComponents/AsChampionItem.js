@@ -15,8 +15,7 @@ class AsChampionItem extends Component {
     }
 
     componentDidMount(){
-        this.evaluateDeposit()
-        console.log("HELLO WORLD");
+        this.evaluateDeposit();
     }
 
     async evaluateDeposit(){

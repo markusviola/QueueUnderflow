@@ -1,26 +1,41 @@
 import React, { Component } from 'react';
 import QuestionItem from './QuestionItem';
+import axios from 'axios';
 
 class Questions extends Component {
 
     constructor(){
         super();
 
+        this.state = {
+            currentQuestions: []
+        }
+    }
+
+    componentDidMount(){
+        this.getQuestions();
+    }
+
+    async getQuestions(){
+        axios.get(`http://localhost:5000/api/question`)
+        .then(res => {
+            const questions = res.data;
+            this.setState({ currentQuestions: questions }, () => {console.log(this.state.currentQuestions)});
+        })
+    }
+
+    handleQuestion(questionID){
+        this.props.handleQuestion(questionID);
     }
 
     render() {
 
-        let process = "";
-
-        if(this.props.dataStatus === true){
-            process = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
-        }
         
         let items;
-        if(this.props.currentParameterizers){
-            items = this.props.currentParameterizers.map(item => {
+        if(this.state.currentQuestions){
+            items = this.state.currentQuestions.map(item => {
                 return (
-                    <QuestionItem instance = {this.props.instance} key={item.key} item = {item}/>
+                    <QuestionItem handleQuestion = {this.handleQuestion.bind(this)} instance = {this.props.instance} key={item.questionId} item = {item}/>
                 )
             });
         }
@@ -28,7 +43,6 @@ class Questions extends Component {
     return (
         <div className="Questions">
             <h3>Questions</h3>
-            {process}
             {items}
         </div>
     );
