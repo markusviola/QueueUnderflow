@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ParameterizerItem from './ParameterizerItem'
+import QuestionItem from './QuestionItem';
 
-class Parameterizers extends Component {
+class Questions extends Component {
 
     constructor(){
         super();
@@ -20,14 +20,14 @@ class Parameterizers extends Component {
         if(this.props.currentParameterizers){
             items = this.props.currentParameterizers.map(item => {
                 return (
-                    <ParameterizerItem instance = {this.props.instance} key={item.key} item = {item}/>
+                    <QuestionItem instance = {this.props.instance} key={item.key} item = {item}/>
                 )
             });
         }
 
     return (
-        <div className="Parameterizers">
-            <h3>Parameterizers</h3>
+        <div className="Questions">
+            <h3>Questions</h3>
             {process}
             {items}
         </div>
@@ -35,4 +35,4 @@ class Parameterizers extends Component {
   }
 }
 
-export default Parameterizers;
+export default Questions;
