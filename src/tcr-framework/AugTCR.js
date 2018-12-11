@@ -716,7 +716,9 @@ class AugTCR {
         
         let contenders = [];
         let A = await new Promise((resolve) =>{
-            this.registryInstance.getContenderNonce((err, nonce) => { resolve(nonce) });
+            this.registryInstance.getContenderNonce((err, nonce) => { 
+                resolve(nonce) 
+            });
         })
 
         if(A.length === 0) return contenders;
@@ -733,12 +735,12 @@ class AugTCR {
                                 isChampion: result[3],
                                 issuer: result[4]
                             });
-
                             resolve();
                         }
                     );
                 });
             }
+            
             return contenders;
         }
     }

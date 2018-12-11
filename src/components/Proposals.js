@@ -52,6 +52,8 @@ class Proposals extends Component {
     return (
         <div className="Proposals">
             <h3>Proposals</h3>
+            <div className="divider"></div>
+            <br/>
             {hashButton}
             {process}
             {items}

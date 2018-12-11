@@ -28,7 +28,9 @@ class Champions extends Component {
             
     return (
         <div className="Champions">
-            <h3>Champions</h3>
+            <h6><b>Current Champions</b></h6>
+            <div className="divider"></div>
+            <br/>
             {items}
             {process}
         </div>

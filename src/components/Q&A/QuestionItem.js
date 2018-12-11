@@ -26,6 +26,7 @@ class QuestionItem extends Component {
                 </div>
                 
             <br/>
+            <div className="divider"></div>
         </div>
     );
   }

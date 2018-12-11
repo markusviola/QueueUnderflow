@@ -49,6 +49,8 @@ class Contenders extends Component {
     return (
         <div className="Contenders">
             <h3>Contenders</h3>
+            <div className="divider"></div>
+            <br/>
             {hashButton}
             {process}
             {items}

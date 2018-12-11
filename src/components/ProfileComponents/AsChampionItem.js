@@ -22,7 +22,7 @@ class AsChampionItem extends Component {
         let deposit = await this.props.instance.registryGetContenderStake(this.props.item.contenderHash);
         let minDeposit = await this.props.instance.paramGet("minDeposit");
       
-        this.setState({isSafe: deposit === parseInt(minDeposit) ? true: false,
+        this.setState({isSafe: deposit >= parseInt(minDeposit) ? true: false,
                     reservedStake: deposit,
                     currentMinDeposit: minDeposit}, () => {})
     }

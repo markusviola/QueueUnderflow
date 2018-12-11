@@ -15,7 +15,9 @@ import contract from './tcr-framework/ContractInstances';
 import QuestionForm from './components/Q&A/QuestionForm';
 import Questions from './components/Q&A/Questions';
 import Question from './components/Q&A/Question';
-import { runInThisContext } from 'vm';
+import 'materialize-css'; 
+import 'materialize-css/dist/css/materialize.min.css';
+import {Button, Icon, Dropdown, NavItem, CollapsibleItem, Collapsible, Row, Col, Input} from 'react-materialize';
 
 class App extends Component {
 
@@ -43,6 +45,8 @@ class App extends Component {
       renderQuestion: false,
       renderQuestions: false,
       renderQuestionForm: false,
+
+      renderQA: false,
 
       contenderProcessStatus: false,
       currentContenders: [],
@@ -418,7 +422,8 @@ class App extends Component {
       renderProfile: "profile" === value ? true : false,
       renderQuestions: "questions" === value ? true : false,
       renderQuestionForm: "questionForm" === value ? true : false,
-      renderQuestion: "question" === value ? true : false
+      renderQuestion: "question" === value ? true : false,
+      renderQA: "QA" === value ? true : false
     })
   }
 
@@ -446,19 +451,28 @@ class App extends Component {
     })
   }
 
+  onQAClicked(){
+
+  }
+
   render() {
 
     let process = "";
 
+    if(this.state.renderQA){
+      
+    }
     if(this.state.processStatus === true){
-      process = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "35px", height: "35px"}}/>
+      process = <div className="progress" style ={{margin: "0"}}>
+                  <div className="indeterminate"></div>
+                </div>
     }
     
     let renderRegisterForm = "";
     let renderChallengerForm = "";
     let renderProposalForm = "";
     let renderProposalChallengerForm = "";
-    let renderChampions = "";
+    let renderChampions = renderChampions = <Champions currentContenders = {this.state.currentContenders} dataStatus = {this.state.contenderProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
     let renderContenders = "";
     let renderParameterizers = "";
     let renderProposals = "";
@@ -474,45 +488,75 @@ class App extends Component {
     else if(this.state.renderChallengerForm) renderChallengerForm = <ChallengerForm selectedContender = {this.state.selectedContender} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderProposalForm) renderProposalForm = <ProposalForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderProposalChallengerForm) renderProposalChallengerForm = <ProposalChallengerForm selectedProposal = {this.state.selectedProposal} onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
-    else if(this.state.renderChampions) renderChampions = <Champions currentContenders = {this.state.currentContenders} dataStatus = {this.state.contenderProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderContenders) renderContenders = <Contenders currentContenders = {this.state.currentContenders} dataStatus = {this.state.contenderProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderParameterizers) renderParameterizers = <Parameterizers currentParameterizers = {this.state.currentParameterizers} dataStatus = {this.state.parameterizersProcessStatus} instance = {this.state.env}/>
     else if(this.state.renderProfile) renderProfile = <Profile onProcess = {this.toggleProcess.bind(this)} currentContenderChallenges = {this.state.currentContenderChallenges} currentProposalChallenges = {this.state.currentProposalChallenges} currentProposals = {this.state.currentProposals} dataStatusB = {this.state.proposalProcessStatus} currentContenders = {this.state.currentContenders} dataStatusA = {this.state.contenderProcessStatus} dataStatusC = {this.state.contenderChallengesProcessStatus} dataStatusD = {this.state.proposalChallengesProcessStatus} instance = {this.state.env}/>
     else if(this.state.renderProposals) renderProposals = <Proposals currentProposals = {this.state.currentProposals} dataStatus = {this.state.proposalProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleProposalChallenge.bind(this)} instance = {this.state.env}/>
 
     return (
-      <div className="App" style={{float:"left", textAlign: "left"}}>
-        <strong>StackOverflow</strong><br/>
-        {process}<br/>
-       
-        Expire Stage Duration: 
-        <div style={{display:"flex",justifyContent:"space-between", width: "630px"}}>
-          <input type="text" placeholder="Contender or Proposal ID" onChange={this.onHashChange.bind(this)}/>
-          <button onClick={this.expireApplyStage.bind(this)}>Application</button>
-          <button onClick={this.expireProposalStage.bind(this)}>Proposal</button>
-          <input type="text" placeholder="Challenge ID" onChange={this.onChallengeIDChange.bind(this)}/>
-          <button onClick={this.expireCommitStage.bind(this)}>Commit</button>
-          <button onClick={this.expireRevealStage.bind(this)}>Reveal</button>
+      <div className="App">
+
+        
+        <div className="navbar-fixed">
+          <ul id="dropdown1" className="dropdown-content">
+            <li><a href="#!">Ask Question</a></li>
+            <li className="divider"></li>
+            <li><a href="#!">Questions</a></li>
+          </ul>
+          <nav className="nav-extended white z-depth-1">
+            <div className="nav-wrapper">
+              <a href="#" className="brand-logo"><img className="logo-image" src="logo.png"/><div style={{display: "table", alignItems: "center", width: "100%"}}>
+              </div></a>
+              <ul id="nav-mobile" className="right hide-on-med-and-down">
+                <li><a href="#" className="grey-text text-darken-1" onClick={this.renderComponent.bind(this, "profile")}><i className="material-icons right">person</i>Persona</a></li>
+              </ul>
+            </div>
+            {process}
+          </nav>
         </div>
+        <div className = "main-sidebar-wrapper grey-text text-darken-1 white">
+          <Collapsible className ="main-sidebar">
+          <CollapsibleItem header='Q&amp;A' icon='question_answer'>
+            <div className="collection">
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "questionForm")}>Ask Question</a>
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "questions")}>Questions</a>
+            </div>
+          </CollapsibleItem>
+          <CollapsibleItem header='Registry' icon='format_list_numbered'>
+            <div className="collection">
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "registerForm")}>Become A Champion</a>
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "contenders")}>Contenders</a>
+            </div>
+          </CollapsibleItem>
+          <CollapsibleItem header='System' icon='settings'>
+            <div className="collection">
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "proposalForm")}>Propose A Value</a>
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "proposals")}>Proposals</a>
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "parameterizers")}>Parameterizers</a>
+            </div>
+          </CollapsibleItem>
+          </Collapsible>
+        </div>
+
+        <div style={{display: "flex",width: "270px", float: "right",  marginTop: "-0.4%"}}>
+        
+          <div className="card" style={{position: "fixed", height: "945px",width: "270px"}}>
+            <div className="container">
+            <br/>
+            {renderChampions}
+            </div>
+          </div>
+        </div>
+        
+        
         <br/>
-        <div style={{display:"flex",justifyContent:"space-between", width: "700"}}>
-          <button onClick={this.renderComponent.bind(this, "registerForm")}>Register Form</button>
-          <button onClick={this.renderComponent.bind(this, "proposalForm")}>Proposal Form</button>
-          <button onClick={this.renderComponent.bind(this, "champions")}>Champions</button>
-          <button onClick={this.renderComponent.bind(this, "contenders")}>Contenders</button>
-          <button onClick={this.renderComponent.bind(this, "parameterizers")}>Parameterizers</button>
-          <button onClick={this.renderComponent.bind(this, "proposals")}>Proposals</button>
-          <button onClick={this.renderComponent.bind(this, "profile")}>Profile</button>
-          <button onClick={this.renderComponent.bind(this, "questions")}>Question List</button>
-          <button onClick={this.renderComponent.bind(this, "questionForm")}>Ask Question</button>
-          <button onClick={this.retrieveData.bind(this)}>Refresh</button>
-        </div>
+
+        <div className="container" style={{paddingLeft: "100px",paddingRight: "200px"}}>
         
         {renderRegisterForm}
         {renderProposalForm}
         {renderChallengerForm}
         {renderProposalChallengerForm}
-        {renderChampions}
         {renderContenders}
         {renderParameterizers}
         {renderProposals}
@@ -520,7 +564,38 @@ class App extends Component {
         {renderQuestions}
         {renderQuestionForm}
         {renderQuestion}
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        {/* <div style={{display:"flex",justifyContent:"space-between", width: "1700px", marginLeft: "350px"}}>
+          <input type="text" placeholder="Contender or Proposal ID" onChange={this.onHashChange.bind(this)}/>
+          <Button onClick={this.expireApplyStage.bind(this)}>Application</Button>
+          <Button onClick={this.expireProposalStage.bind(this)}>Proposal</Button>
+          <input type="text" placeholder="Challenge ID" onChange={this.onChallengeIDChange.bind(this)}/>
+          <Button onClick={this.expireCommitStage.bind(this)}>Commit</Button>
+          <Button onClick={this.expireRevealStage.bind(this)}>Reveal</Button>
+        </div> */}
+        <div style={{bottom: "0", position: "fixed", width: "100%"}}>
+          <div className = "card white" style={{margin: "0"}}>
+            <div className = "row" style={{display: "flex", alignItems: "center", margin: "0"}}>
+              <div className = "col s2"><input type="text" placeholder="Contender/ Proposal ID" onChange={this.onHashChange.bind(this)}/></div>
+              <div style ={{width: "280px", display: "flex",justifyContent:"space-evenly"}}>
+                  <Button onClick={this.expireApplyStage.bind(this)} className="grey">Application</Button>
+                  <Button onClick={this.expireProposalStage.bind(this)} className="grey">Proposal</Button>
+              </div>
+              <div className = "col s2"><input type="text" placeholder="Challenge ID" onChange={this.onChallengeIDChange.bind(this)}/></div>
+              <div style ={{width: "280px", display: "flex",justifyContent:"space-evenly"}}>
+                  <Button onClick={this.expireCommitStage.bind(this)} className="grey">Commit</Button>
+                  <Button onClick={this.expireRevealStage.bind(this)} className="grey">Reveal</Button>
+              </div>
+            </div>
+          </div>
+        </div>
         
+          
+        
+
       </div>
     );
   }

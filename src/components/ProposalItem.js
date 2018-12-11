@@ -101,7 +101,7 @@ class ProposalItem extends Component {
                 challengeState = "Proposal is in pending state."
                 commitState = <div>{this.props.item.commitVoteExpiry}<br/></div>;
                 revealState = <div>{this.props.item.revealVoteExpiry}<br/></div>;
-                updateButton = <button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button>
+                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
             }
             else {
                 challengeState = "Proposal has been challenged!";
@@ -140,6 +140,8 @@ class ProposalItem extends Component {
             {votingButtons}
             {challengeButton}
             {updateButton}
+            <br/>
+            <div className="divider"></div>
         </div>
     );
   }

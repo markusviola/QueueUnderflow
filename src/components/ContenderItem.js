@@ -138,8 +138,8 @@ class ContenderItem extends Component {
             {votingButtons}
             {challengeButton}
             {updateButton}
-
             <br/>
+            <div className="divider"></div>
         </div>
     );
   }

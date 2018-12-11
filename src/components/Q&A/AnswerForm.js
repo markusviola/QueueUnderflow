@@ -18,9 +18,8 @@ class AnswerForm extends Component {
         const que = {
             answer: this.state.statement,
             answeredBy: this.props.instance.getCurrentAccount(),
-            answeredByName: "Test",
+            answeredByName: "Lunafreia",
             question_id: this.props.questionID
-
         };
 
         axios.post(`http://localhost:5000/api/answer/create`, que)
@@ -35,20 +34,19 @@ class AnswerForm extends Component {
     }
     
     render() {
-
-    return (
-        <div className="AnswerForm">
-            <form onSubmit={this.handleSubmit.bind(this)}>
-                <div>
-                    <label>Give your answer:</label><br/>
-                    <textarea onChange={this.onAnswerChange.bind(this)} placeholder="Input your answer..." style={{width:"650px", height:"190px"}} />
-                </div>
-                <br/>
-                <button type="submit">Submit</button>
-            </form>    
-        </div>
-    );
-  }
+        return (
+            <div className="AnswerForm">
+                <form onSubmit={this.handleSubmit.bind(this)}>
+                    <div>
+                        <label>Give your answer:</label><br/>
+                        <textarea onChange={this.onAnswerChange.bind(this)} placeholder="Input your answer..." style={{width:"650px", height:"190px"}} />
+                    </div>
+                    <br/>
+                    <button type="submit">Submit</button>
+                </form>    
+            </div>
+        );
+    }
 }
 
 export default AnswerForm;

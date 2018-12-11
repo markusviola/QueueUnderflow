@@ -37,6 +37,8 @@ class RegisterForm extends Component {
     return (
         <div className="Register">
             <h3>Register As Champion!</h3>
+            <div className="divider"></div>
+            <br/>
             <form onSubmit={this.handleSubmit.bind(this)}>
                 <div>
                     <label>Champion Name:</label><br/>

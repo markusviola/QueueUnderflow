@@ -4,5 +4,50 @@
        url('Resources/googlesans-regular-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
-
 }
+
+*{
+  font-family: 'google_sansregular';
+}
+
+.nav-wrapper{
+  padding-left: 5%;
+  padding-right: 3%;
+}
+
+.main-sidebar{
+  width: 300px;
+  height: 945px;
+}
+
+.main-sidebar-wrapper{
+  position: fixed;
+  margin-top: -0.4%;
+}
+
+/* #champion-sidebar{
+  width: 240px;
+  height: 945px;
+  position: fixed;
+  margin-top: -0.4%;
+} */
+
+
+
+
+.logo-image {
+  height: 27%;
+  width: 27%; 
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.main-loader {
+  height: 4%;
+  width: 4%;
+}
+
+
+
+

@@ -11,15 +11,18 @@ class ChampionItem extends Component {
 
         let challengeButton = "";
         if(this.props.item.isConcluded){
-            challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Rechallenge!</button><br/></div>;
+            challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Rechallenge!</button></div>;
         }
-        else challengeButton = "Champion is currently challenged."
+        else challengeButton = <div>Being challenged!</div>
         
                 
     return (
         <div className="ChampionItem">
-            <strong>{this.props.item.contender}</strong><br/>
-            {challengeButton}<br/><br/>
+            <br/>
+            <b>{this.props.item.contender}</b><br/>
+            {challengeButton}
+            <br/>
+            <div className="divider"></div>
         </div>
     );
   }

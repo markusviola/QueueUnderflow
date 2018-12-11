@@ -11,7 +11,8 @@ class Question extends Component {
 
         this.state = {
             currentAnswers: [],
-            questionDetails: {}
+            questionDetails: {},
+            userChampions: []
         }
 
     }
@@ -30,15 +31,30 @@ class Question extends Component {
         
     }
 
+    async getChampionDetails(){
+
+        let champions = await this.props.currentContenders.filter((item) => {
+            return (item.contender === "" || (!item.isChampion || !(item.issuer === this.props.instance.getCurrentAccount()))) ? false: true})
+      
+        this.setState({userChampions: champions}, ()=>{console.log(this.state.userChampions)})
+    }
+
     componentDidMount(){
         
         this.getQuestion();
+        this.getChampionDetails();
+        
     }
 
     render() {
 
-        
         let items;
+        let answerForm = "Only a champion can answer questions."
+
+        if(this.state.userChampions.length > 0){
+            answerForm = <AnswerForm instance = {this.props.instance} currentContenders = {this.props.currentContenders}/>
+        }
+
         if(this.state.currentAnswers){
             items = this.state.currentAnswers.map(item => {
                 return (
@@ -64,7 +80,7 @@ class Question extends Component {
             <br/>
             <div>By {this.state.questionDetails.askedByName}</div>
             <br/><br/>{items}<br/><br/>
-            <AnswerForm instance = {this.props.instance} currentContenders = {this.props.currentContenders}/>
+            {answerForm}
         </div>
        
     );

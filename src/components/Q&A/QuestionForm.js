@@ -38,8 +38,11 @@ class QuestionForm extends Component {
 
     return (
         <div className="QuestionForm">
-            <h3>As A Question</h3>
+            <h3>Ask A Question</h3>
+            <div className="divider"></div>
+            <br/>
             <form onSubmit={this.handleSubmit.bind(this)}>
+            
                 <div>
                     <label>Name:</label><br/>
                     <input type="text" placeholder="(Optional)" ref="name"/>

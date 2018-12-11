@@ -37,6 +37,8 @@ class ProposalForm extends Component {
     return (
         <div className="ProposalForm">
             <h3>Change The System!</h3>
+            <div className="divider"></div>
+            <br/>
             <form onSubmit={this.handleSubmit.bind(this)}>
                 <div>
                     <label>Parameter Name:</label><br/>
@@ -53,8 +55,6 @@ class ProposalForm extends Component {
                 <br/>
                 <button type="submit">Submit</button>
             </form>    
-            
-            
         </div>
     );
   }

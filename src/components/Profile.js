@@ -299,29 +299,30 @@ class Profile extends Component {
         <div className="Profile">
 
             <h3>Profile</h3>
+            <div className="divider"></div>
             <strong>User Type: {this.state.profileType}</strong><br/>
             {championHeader}
             {items}
             
 
             <h3>Contenders</h3>
-            
-            <h4>Challenged:</h4>
+            <div className="divider"></div>
+            <b>Challenged:</b>
             {processA}
             {itemsA}
 
-            <h4>Voted:</h4>
+            <b>Voted:</b>
             {contenderIncentivesButton}<br/><br/>
             {processB}
             {itemsC}
 
             <h3>Parameter Proposals</h3>
-            
-            <h4>Challenged:</h4>
+            <div className="divider"></div>
+            <b>Challenged:</b>
             {processC}
             {itemsB}
 
-            <h4>Voted:</h4>
+            <b>Voted:</b>
             {proposalIncentivesButton}<br/><br/>
             {processD}
             {itemsD}
