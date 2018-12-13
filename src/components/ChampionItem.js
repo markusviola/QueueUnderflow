@@ -11,7 +11,8 @@ class ChampionItem extends Component {
 
         let challengeButton = "";
         if(this.props.item.isConcluded){
-            challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Rechallenge!</button></div>;
+            challengeButton = <div><a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onChallengeClicked.bind(this)}>
+            <i className="tiny material-icons right">thumb_down</i><b>Challenge</b></a></div>;
         }
         else challengeButton = <div>Being challenged!</div>
         

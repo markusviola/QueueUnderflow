@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-
-
+import {Card, CardTitle, Col} from 'react-materialize';
+import registerImage from '../imgs/register.jpg'
 class RegisterForm extends Component {
 
     constructor(){
@@ -8,7 +8,8 @@ class RegisterForm extends Component {
 
         this.state = {
             minDeposit: "Calculating...",
-            statement: ""
+            statement: "",
+            name: ""
         }
     }
 
@@ -19,44 +20,43 @@ class RegisterForm extends Component {
         })
     }
 
-    handleSubmit(e){
-        console.log(window.web3.sha3((window.web3.eth.accounts[0]+this.refs.name.value+this.state.statement)));
-        this.props.instance.registryRegister(this.refs.name.value, parseInt(this.state.minDeposit), this.state.statement)
+    handleSubmit(){
+        this.props.instance.registryRegister(this.state.name, parseInt(this.state.minDeposit), this.state.statement)
         .then((isTransaction) => {
             this.props.onProcess(isTransaction);
         });
-        e.preventDefault();
     }
 
     onStatementChange(evt){
         this.setState({statement: evt.target.value})
     }
+
+    onNameChange(evt){
+        this.setState({name: evt.target.value})
+    }
+
     
     render() {
 
     return (
         <div className="Register">
-            <h3>Register As Champion!</h3>
-            <div className="divider"></div>
-            <br/>
-            <form onSubmit={this.handleSubmit.bind(this)}>
-                <div>
-                    <label>Champion Name:</label><br/>
-                    <input type="text" ref="name" />
-                </div>
-                <div>
-                    <label>Application Stake:</label><br/>
-                    <input type="text" value={this.state.minDeposit} ref="stake" disabled/>
-                </div>
-                <div>
-                    <label>Statement of Eligibility:</label><br/> 
-                    <textarea onChange={this.onStatementChange.bind(this)} placeholder="Input some links of your porfolio or resume..." style={{width:"450px", height:"200px"}} />
-                </div>
+            <Card actions={[<a href='#' className="orange-text text-darken-2" onClick={this.handleSubmit.bind(this)}><b>Apply</b></a>]}>
+                <h4>Register As Consultant!</h4>
+                <div className="divider"></div>
                 <br/>
-                <button type="submit">Submit</button>
-            </form>    
-            
-            
+                <div>
+                    Consultant Name:<br/>
+                    <input type="text" onChange={this.onNameChange.bind(this)} />
+                </div>
+                <div><br/>
+                    Application Stake:<br/>
+                    <input type="text" value={this.state.minDeposit} readOnly/>
+                </div>
+                <div><br/>
+                    Statement of Eligibility:<br/><br/>
+                    <textarea onChange={this.onStatementChange.bind(this)} placeholder=" Input some links of your porfolio or resume..." style={{width:"100%", height:"200px"}} />
+                </div>
+            </Card>
         </div>
     );
   }

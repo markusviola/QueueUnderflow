@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "css-loader": "^2.0.0",
+    "file-loader": "^2.0.0",
     "materialize-css": "^1.0.0-rc.2",
     "moment": "^2.22.2",
     "react": "^16.6.3",

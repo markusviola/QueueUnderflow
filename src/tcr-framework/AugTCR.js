@@ -74,195 +74,195 @@ class AugTCR {
 
     //Events
     PLCROperationEvent(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.plcrInstance.OperationSuccess().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Transaction successful!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     PLCRVoteCommited(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.plcrInstance._VoteCommitted().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Commited vote!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     PLCRVoteRevealed(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.plcrInstance._VoteRevealed().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Revealed vote!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     PLCRVotingRightsGranted(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.plcrInstance._VotingRightsGranted().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Voting rights granted!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     PLCRVotingRightsWithdrawn(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.plcrInstance._VotingRightsWithdrawn().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Voting rights withdrawn!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     PLCRTokensRescued(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.plcrInstance._TokensRescued().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Tokens has been rescued!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     paramOperationEvent(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.parameterizerInstance.OperationSuccess().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"Transaction successful!"]);
                 }
-                else resolve([false, "Transaction failed!"]);
+                else reject([false, "Transaction failed!"]);
             })
         }); 
     }
 
     paramNewProposal(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.parameterizerInstance.NewProposal().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"New proposal has been raised!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
     
     paramNewProposalChallenge(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.parameterizerInstance.NewProposalChallenge().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"A proposal has been disputed!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     paramPChallengerWon(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.parameterizerInstance.PChallengerWon().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"A challenger won. The proposal failed!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     paramPChallengerLost(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.parameterizerInstance.PChallengerLost().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"A challenger lost. The proposal passed!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     paramIncentiveClaimed(){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.IncentiveClaimed().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "A contender reward was claimed!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         })
     }
 
     registryChallengerWon(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.registryInstance.ChallengerWon().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"A challenger won. The contender is removed."]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
 
     registryChallengerLost(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.registryInstance.ChallengerLost().watch((error, result)=>{
                 if(!error) {
                     resolve([true,"A challenger lost. The contender remains!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         }); 
     }
    
 
     registryOperationEvent(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.registryInstance.OperationSuccess().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "Transaction successful!"]);
                 }
-                else resolve([false, "Transaction failed!"]);
+                else reject([false, "Transaction failed!"]);
             })
         }); 
     }
 
     registryWithdrawalEvent(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.registryInstance.Withdrawal().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "A contender has withdrawn tokens!"]);
                 }
-                else resolve([false, "Transaction failed!"]);
+                else reject([false, "Transaction failed!"]);
             })
         }); 
     }
 
     registryDepositEvent(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.registryInstance.Deposit().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "A contender has deposited tokens!"]);
                 }
-                else resolve([false, "Transaction failed!"]);
+                else reject([false, "Transaction failed!"]);
             })
         }); 
     }
 
     registryTouchedAndRemoved(){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.registryInstance.TouchedAndRemoved().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "A champion has been touched and removed!"]);
@@ -273,34 +273,34 @@ class AugTCR {
     }
     
     registryNewContender(){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.NewContender().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "A new contender has been added!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         })
     }
 
     registryNewChallenge(){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.NewChallenge().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "A contender has been challenged!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         })
     }
 
     registryIncentiveClaimed(){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.IncentiveClaimed().watch((error, result)=>{
                 if(!error) {
                     resolve([true, "A contender reward was claimed!"]);
                 }
-                else resolve([false, "Transaction failed."]);
+                else reject([false, "Transaction failed."]);
             })
         })
     }
@@ -328,7 +328,7 @@ class AugTCR {
     //There should be a looper to navigate instances.
     retrieveEnvironmentInstance(_id, _creator){
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.contractInstance.getEnvInstances(_id, _creator,
                 {from: this.getCurrentAccount()},
                 (err, result) => {
@@ -344,7 +344,7 @@ class AugTCR {
     //Instance Setter
     setEnvironmentInstance(plcrAddress, paramAddress, regAddress){
         
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const PLCRContract = window.web3.eth.contract(contracts.plcrABI);
             this.plcrInstance = PLCRContract.at(plcrAddress);
 
@@ -362,12 +362,12 @@ class AugTCR {
     //PLCR Functions
 
     PLCRTokenFaucet(_value){
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             this.plcrInstance.tokenFaucet(_value,
                 {gas: 3000000, from: this.getCurrentAccount(), value: 3000000},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -376,7 +376,7 @@ class AugTCR {
     }
 
     PLCRGetVotingBalance(){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.getVotingBalance({from: this.getCurrentAccount()},(err, result) => {
                 resolve(result.c[0]);
             }    
@@ -385,7 +385,7 @@ class AugTCR {
     }
 
     PLCRGetTokenAddress(){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.token.call((err, result) => {
                 resolve(result);
             });
@@ -402,12 +402,12 @@ class AugTCR {
     }
 
     PLCRRequestVotingRights(_numTokens){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.requestVotingRights(_numTokens,
                 {gas: 300000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -416,12 +416,12 @@ class AugTCR {
     }
 
     PLCRWithdrawVotingRights(_numTokens) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.withdrawVotingRights(_numTokens,
                 {gas: 300000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -432,12 +432,12 @@ class AugTCR {
     
     
     PLCRCommitVote(_pollID, _voteOption, _salt, _numTokens){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.commitVote(_pollID, Web3Utils.soliditySha3(parseInt(_voteOption) ,parseInt(_salt)), parseInt(_numTokens), 0,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -447,12 +447,12 @@ class AugTCR {
     }
 
     PLCRRevealVote(_pollID, _voteOption, _salt){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.revealVote(_pollID, _voteOption, _salt,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -461,11 +461,11 @@ class AugTCR {
     }
 
     PLCRDidCommit(_challengeID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.didCommit(this.getCurrentAccount(),_challengeID,
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve("Error")
+                        reject("Error")
                     }
                     else resolve(result)
                 }
@@ -474,11 +474,11 @@ class AugTCR {
     }
 
     PLCRDidReveal(_challengeID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.didReveal(this.getCurrentAccount(),_challengeID,
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve("Error")
+                        reject("Error")
                     }
                     else resolve(result)
                 }
@@ -487,11 +487,11 @@ class AugTCR {
     }
     
     PLCRRescueTokens(_challengeID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.rescueTokens(_challengeID,
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -500,11 +500,11 @@ class AugTCR {
     }
 
     PLCRGetLastNode(){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.getLastNode(this.getCurrentAccount(),
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve("Error")
+                        reject("Error")
                     }
                     else resolve(result.c[0])
                 }
@@ -514,12 +514,12 @@ class AugTCR {
     
 
     PLCRAAAExpireCommitDuration(_pollID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.AAAexpireCommitDuration(_pollID,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -528,12 +528,12 @@ class AugTCR {
     }
 
     PLCRAAAExpireRevealDuration(_pollID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.plcrInstance.AAAexpireRevealDuration(_pollID,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -543,12 +543,12 @@ class AugTCR {
 
     //Registry Functions
     registryRegister(_desc, _amount, _extra){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.register(window.web3.sha3((this.getCurrentAccount()+_desc+_extra)), parseInt(_amount), _desc, _extra,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -557,12 +557,12 @@ class AugTCR {
     }
 
     registryDeposit(_contenderHash, _amount){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.deposit(_contenderHash, _amount,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -571,12 +571,12 @@ class AugTCR {
     }
 
     registryWithdraw(_contenderHash, _amount){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.withdraw(_contenderHash, _amount,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -586,12 +586,12 @@ class AugTCR {
 
     registryChallenge(_contenderHash, _evidence){
         
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.challenge(_contenderHash, _evidence,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -601,12 +601,12 @@ class AugTCR {
 
     //Array of Bytes32
     registryBatchUpdateStatuses(_contenderHashes){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.batchUpdateStatuses(_contenderHashes,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -616,12 +616,12 @@ class AugTCR {
 
     //Array of Integer
     registryBatchClaimIncentives(_challengeIDs){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.batchClaimIncentives(_challengeIDs,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -630,11 +630,11 @@ class AugTCR {
     }
 
     registryViewVoterIncentive(_challengeID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.viewVoterIncentive(this.getCurrentAccount(), _challengeID,
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve("Error")
+                        reject("Error")
                     }
                     else resolve(result.c[0])
                 }
@@ -643,11 +643,11 @@ class AugTCR {
     }
 
     registryIncentiveClaimStatus(_challengeID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.incentiveClaimStatus(_challengeID, this.getCurrentAccount(),
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve("Error")
+                        reject("Error")
                     }
                     else resolve(result)
                 }
@@ -656,12 +656,12 @@ class AugTCR {
     }
 
     registryAAAExpireApplication(_contenderHash){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.AAAexpireApplication(_contenderHash,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -670,12 +670,12 @@ class AugTCR {
     }
 
     registryGetContenderStake(_contenderHash){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.contenders(_contenderHash,
                 {gas: 3000000, from: this.getCurrentAccount()},
                     (err, result) => {
                         if(typeof result === 'undefined'){
-                            resolve("Error");
+                            reject("Error");
                         }
                         resolve(result[4].c[0]);
                     }
@@ -686,7 +686,7 @@ class AugTCR {
     }
     
     registryGetContenderNonce() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.getContenderNonce(
                 (err, result) => {
                     console.log(result);
@@ -697,7 +697,7 @@ class AugTCR {
     }
 
     registryGetContender(_contenderHash) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.registryInstance.getContender(_contenderHash,
                 (err, result) => {
                     return {
@@ -715,7 +715,7 @@ class AugTCR {
     async registryGetAllContenders(){
         
         let contenders = [];
-        let A = await new Promise((resolve) =>{
+        let A = await new Promise((resolve, reject) =>{
             this.registryInstance.getContenderNonce((err, nonce) => { 
                 resolve(nonce) 
             });
@@ -724,7 +724,7 @@ class AugTCR {
         if(A.length === 0) return contenders;
         else{
             for(let i = 0; i<A.length; i++){
-                let B = await new Promise((resolve) => {
+                let B = await new Promise((resolve, reject) => {
                     this.registryInstance.getContender(A[i],
                         (err, result) => {
                             contenders.push({
@@ -754,7 +754,7 @@ class AugTCR {
     }
     
     async registryGetChallenge(_challengeID) {
-        let result = await new Promise((resolve) => {
+        let result = await new Promise((resolve, reject) => {
             let challenge = {}
             this.registryInstance.getChallenge(_challengeID,
                 async (err, result) => {
@@ -778,7 +778,7 @@ class AugTCR {
     async registryGetAllChallenges(){
 
         let challenges = [];
-        let A = await new Promise((resolve) => {
+        let A = await new Promise((resolve, reject) => {
             this.registryInstance.getChallengeNonce((err, nonce) => { resolve(nonce) });
         })
 
@@ -786,7 +786,7 @@ class AugTCR {
         else{
             for(let i = 0; i<A.length; i++){
                 let challenge = {}
-                await new Promise((resolve) => {
+                await new Promise((resolve, reject) => {
                     this.registryInstance.getChallenge(A[i],
                         async (err, result) => {
                             
@@ -794,7 +794,7 @@ class AugTCR {
                             challenge.isConcluded = result[0];
                             challenge.incentivePool = result[1].c[0];
                             challenge.challenger = result[2];
-                            await new Promise((resolve) => {
+                            await new Promise((resolve, reject) => {
                                 this.plcrInstance.getPoll(A[i],
                                     (err, result) => {
                                         challenge.commitEndDate = result[0].c[0];
@@ -816,12 +816,12 @@ class AugTCR {
     //Parameterizer Functions
 
     paramProposeAdjustment(_paramName, _paramVal){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.proposeAdjustment(_paramName, _paramVal,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -830,12 +830,12 @@ class AugTCR {
     }
     
     paramChallengeProposal(_proposalID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.challengeProposal(_proposalID,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined') {
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -844,12 +844,12 @@ class AugTCR {
     }
 
     paramProcessProposalResult(_proposalID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.processProposalResult(_proposalID,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined') {
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -858,12 +858,12 @@ class AugTCR {
     }
 
     paramBatchClaimIncentives(_challengeIDs){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.batchClaimIncentives(_challengeIDs,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined') {
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }
@@ -872,11 +872,11 @@ class AugTCR {
     }
 
     paramViewVoterIncentive( _challengeID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.viewVoterIncentive(this.getCurrentAccount(), _challengeID,
                 (err, result) => {
                     if(typeof result === 'undefined') {
-                        resolve("Error")
+                        reject("Error")
                     }
                     else resolve(result.c[0])
                 }
@@ -885,11 +885,11 @@ class AugTCR {
     }
 
     paramIncentiveClaimStatus(_challengeID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.incentiveClaimStatus(_challengeID, this.getCurrentAccount(),
                 (err, result) => {
                     if(typeof result === 'undefined') {
-                        resolve("Error")
+                        reject("Error")
                     }
                     else resolve(result)
                 }
@@ -898,7 +898,7 @@ class AugTCR {
     }
 
     paramGet(_name){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.get(_name,
                 (err, result) => {
                     resolve(String(result.c[0]));
@@ -910,7 +910,7 @@ class AugTCR {
     async paramGetAllParameterizers(){
         let parameterizers = []
         for(let i = 0; i<this.paramNames.length; i++){
-            await new Promise((resolve) => {
+            await new Promise((resolve, reject) => {
                 this.parameterizerInstance.get(this.paramNames[i],
                     (err, result) => {
                         parameterizers.push({
@@ -950,14 +950,14 @@ class AugTCR {
     async paramGetAllProposals(){
         
         let proposals = [];
-        let A = await new Promise((resolve) =>{
+        let A = await new Promise((resolve, reject) =>{
             this.parameterizerInstance.getProposalNonce((err, nonce) => { resolve(nonce) });
         })
 
         if(A.length === 0) return proposals;
         else{
             for(let i = 0; i<A.length; i++){
-                let B = await new Promise((resolve) => {
+                let B = await new Promise((resolve, reject) => {
                     this.parameterizerInstance.getProposal(A[i],
                         (err, result) => {
                             proposals.push({
@@ -988,7 +988,7 @@ class AugTCR {
     
 
     async paramGetChallenge(_challengeID) {
-        let result = await new Promise((resolve) => {
+        let result = await new Promise((resolve, reject) => {
             let challenge = {}
             this.parameterizerInstance.getChallenge(_challengeID,
                 async (err, result) => {
@@ -1013,7 +1013,7 @@ class AugTCR {
     async paramGetAllChallenges(){
 
         let challenges = [];
-        let A = await new Promise((resolve) => {
+        let A = await new Promise((resolve, reject) => {
             this.parameterizerInstance.getChallengeNonce((err, nonce) => { resolve(nonce) });
         })
 
@@ -1021,14 +1021,14 @@ class AugTCR {
         else{
             for(let i = 0; i<A.length; i++){
                 let challenge = {}
-                await new Promise((resolve) => {
+                await new Promise((resolve, reject) => {
                     this.parameterizerInstance.getChallenge(A[i],
                         async (err, result) => {
                             challenge.challengeID = A[i].c[0];
                             challenge.isConcluded = result[0];
                             challenge.incentivePool = result[1].c[0];
                             challenge.challenger = result[2];
-                            await new Promise((resolve) => {
+                            await new Promise((resolve, reject) => {
                                 this.plcrInstance.getPoll(A[i],
                                     (err, result) => {
                                         challenge.commitEndDate = result[0].c[0];
@@ -1048,12 +1048,12 @@ class AugTCR {
     }
 
     paramAAAExpireProposal(_proposalID){
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             this.parameterizerInstance.AAAexpireProposal(_proposalID,
                 {gas: 3000000, from: this.getCurrentAccount()},
                 (err, result) => {
                     if(typeof result === 'undefined'){
-                        resolve(false)
+                        reject(false)
                     }
                     else resolve(true)
                 }

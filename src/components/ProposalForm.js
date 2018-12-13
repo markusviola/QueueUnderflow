@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import {Col, Card} from 'react-materialize';
 
 class ProposalForm extends Component {
 
@@ -8,7 +8,9 @@ class ProposalForm extends Component {
 
         this.state = {
             minDeposit: "Calculating...",
-            statement: ""
+            statement: "",
+            paramName: "",
+            paramVal: 0
         }
     }
 
@@ -20,7 +22,7 @@ class ProposalForm extends Component {
     }
 
     handleSubmit(e){
-        this.props.instance.paramProposeAdjustment(this.refs.paramName.value, this.refs.paramVal.value)
+        this.props.instance.paramProposeAdjustment(this.state.paramName, this.state.paramVal)
         .then((isTransaction) => {
             this.props.onProcess(isTransaction);
         });
@@ -31,31 +33,39 @@ class ProposalForm extends Component {
     onStatementChange(evt){
         this.setState({statement: evt.target.value})
     }
+
+    onParamNameChange(evt){
+        this.setState({paramName: evt.target.value})
+    }
+
+    onParamValChange(evt){
+        this.setState({paramVal: evt.target.value})
+    }
+
     
     render() {
 
     return (
-        <div className="ProposalForm">
-            <h3>Change The System!</h3>
-            <div className="divider"></div>
-            <br/>
-            <form onSubmit={this.handleSubmit.bind(this)}>
+        <Col m={7} s={12}>
+            <Card actions={[<a href='#' className="orange-text text-darken-2" onClick={this.handleSubmit.bind(this)}><b>Submit Proposal</b></a>]}>
+                <h4>Change The System!</h4>
+                <div className="divider"></div>
+                <br/>
                 <div>
                     <label>Parameter Name:</label><br/>
-                    <input type="text" ref="paramName" />
+                    <input type="text" onChange={this.onParamNameChange.bind(this)} />
                 </div>
                 <div>
                     <label>Proposed Value:</label><br/>
-                    <input type="text" ref="paramVal"/>
+                    <input type="text" onChange={this.onParamValChange.bind(this)}/>
                 </div>
                 <div>
                     <label>Proposal Stake:</label><br/>
-                    <input type="text" value={this.state.minDeposit} ref="stake" disabled/>
+                    <input type="text" value={this.state.minDeposit} readOnly/>
                 </div>
                 <br/>
-                <button type="submit">Submit</button>
-            </form>    
-        </div>
+            </Card>
+        </Col>
     );
   }
 }

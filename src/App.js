@@ -45,8 +45,7 @@ class App extends Component {
       renderQuestion: false,
       renderQuestions: false,
       renderQuestionForm: false,
-
-      renderQA: false,
+      renderDevTool: false,
 
       contenderProcessStatus: false,
       currentContenders: [],
@@ -161,10 +160,10 @@ class App extends Component {
                   var revealEndDate = new Date(challengeInfo.revealEndDate*1000);
 
                   if(now > commitEndDate) commitState = "Voting duration concluded."
-                  else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
+                  else commitState = <div>{"Expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
 
                   if(now > revealEndDate) revealState = "Reveal duration concluded."
-                  else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
+                  else revealState = <div>{"Expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
 
                   incentivePool = challengeInfo.incentivePool;
                   isConcluded = challengeInfo.isConcluded;
@@ -208,10 +207,10 @@ class App extends Component {
               var revealEndDate = new Date(result[i].revealEndDate*1000);
 
               if(now > commitEndDate) commitState = "Voting duration concluded."
-              else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
+              else commitState = <div>{"Expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
 
               if(now > revealEndDate) revealState = "Reveal duration concluded."
-              else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
+              else revealState = <div>{"Expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
 
               updatedContenderChallenges.push({
                   key: i+1,
@@ -255,10 +254,10 @@ class App extends Component {
                   var revealEndDate = new Date(challengeInfo.revealEndDate*1000);
 
                   if(now > commitEndDate) commitState = "Voting duration concluded."
-                  else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
+                  else commitState = <div>{"Expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
 
                   if(now > revealEndDate) revealState = "Reveal duration concluded."
-                  else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
+                  else revealState = <div>{"Expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
 
                   incentivePool = challengeInfo.incentivePool;
                   isConcluded = challengeInfo.isConcluded;
@@ -301,10 +300,10 @@ class App extends Component {
               var revealEndDate = new Date(result[i].revealEndDate*1000);
 
               if(now > commitEndDate) commitState = "Voting duration concluded."
-              else commitState = <div>{"Commit: Voting expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
+              else commitState = <div>{"Expires "+moment(commitEndDate).from(now)+"."}<br/></div>;
 
               if(now > revealEndDate) revealState = "Reveal duration concluded."
-              else revealState = <div>{"Reveal: Confirmation expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
+              else revealState = <div>{"Expires "+moment(revealEndDate).from(now)+"."}<br/></div>;
               
               updatedProposalChallenges.push({
                   key: i+1,
@@ -338,10 +337,10 @@ class App extends Component {
 
   hideProcess(result,message){
     if(result){
-      alert(message);
+      window.Materialize.toast(message, 2200);
       this.retrieveData();
     }
-    else alert(message);
+    else window.Materialize.toast(message, 2200);
     
     this.setState({processStatus: false});
   }
@@ -359,7 +358,6 @@ class App extends Component {
       });
       this.refs.amount.value = "";
     }
-    
   }
 
   onGetVotingBalance(){
@@ -422,8 +420,7 @@ class App extends Component {
       renderProfile: "profile" === value ? true : false,
       renderQuestions: "questions" === value ? true : false,
       renderQuestionForm: "questionForm" === value ? true : false,
-      renderQuestion: "question" === value ? true : false,
-      renderQA: "QA" === value ? true : false
+      renderQuestion: "question" === value ? true : false
     })
   }
 
@@ -451,17 +448,16 @@ class App extends Component {
     })
   }
 
-  onQAClicked(){
-
+  activateDevTool(){
+    this.setState({
+      renderDevTool: !this.state.renderDevTool
+    })
   }
 
   render() {
 
     let process = "";
 
-    if(this.state.renderQA){
-      
-    }
     if(this.state.processStatus === true){
       process = <div className="progress" style ={{margin: "0"}}>
                   <div className="indeterminate"></div>
@@ -480,6 +476,26 @@ class App extends Component {
     let renderQuestionForm ="";
     let renderQuestions = "";
     let renderQuestion = "";
+    let renderDevTool = "";
+
+    if(this.state.renderDevTool){
+      renderDevTool = <div style={{bottom: "0", position: "fixed", width: "100%"}}>
+                    <div className = "card white" style={{margin: "0"}}>
+                      <div className = "row" style={{display: "flex", alignItems: "center", margin: "0"}}>
+                        <div className = "col s2"><input type="text" placeholder="Contender/ Proposal ID" onChange={this.onHashChange.bind(this)}/></div>
+                        <div style ={{width: "280px", display: "flex",justifyContent:"space-evenly"}}>
+                            <Button onClick={this.expireApplyStage.bind(this)} className="grey">Application</Button>
+                            <Button onClick={this.expireProposalStage.bind(this)} className="grey">Proposal</Button>
+                        </div>
+                        <div className = "col s2"><input type="text" placeholder="Challenge ID" onChange={this.onChallengeIDChange.bind(this)}/></div>
+                        <div style ={{width: "280px", display: "flex",justifyContent:"space-evenly"}}>
+                            <Button onClick={this.expireCommitStage.bind(this)} className="grey">Commit</Button>
+                            <Button onClick={this.expireRevealStage.bind(this)} className="grey">Reveal</Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+    }
 
     if(this.state.renderRegisterForm) renderRegisterForm = <RegisterForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
     else if(this.state.renderQuestionForm) renderQuestionForm = <QuestionForm onProcess = {this.toggleProcess.bind(this)} instance = {this.state.env}/>
@@ -524,7 +540,7 @@ class App extends Component {
           </CollapsibleItem>
           <CollapsibleItem header='Registry' icon='format_list_numbered'>
             <div className="collection">
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "registerForm")}>Become A Champion</a>
+              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "registerForm")}>Become A Consultant</a>
               <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "contenders")}>Contenders</a>
             </div>
           </CollapsibleItem>
@@ -533,6 +549,7 @@ class App extends Component {
               <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "proposalForm")}>Propose A Value</a>
               <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "proposals")}>Proposals</a>
               <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "parameterizers")}>Parameterizers</a>
+              <a href="#!" className="collection-item grey-text" onClick={this.activateDevTool.bind(this)}>Developer Tool</a>
             </div>
           </CollapsibleItem>
           </Collapsible>
@@ -568,30 +585,7 @@ class App extends Component {
         <br/>
         <br/>
         <br/>
-        {/* <div style={{display:"flex",justifyContent:"space-between", width: "1700px", marginLeft: "350px"}}>
-          <input type="text" placeholder="Contender or Proposal ID" onChange={this.onHashChange.bind(this)}/>
-          <Button onClick={this.expireApplyStage.bind(this)}>Application</Button>
-          <Button onClick={this.expireProposalStage.bind(this)}>Proposal</Button>
-          <input type="text" placeholder="Challenge ID" onChange={this.onChallengeIDChange.bind(this)}/>
-          <Button onClick={this.expireCommitStage.bind(this)}>Commit</Button>
-          <Button onClick={this.expireRevealStage.bind(this)}>Reveal</Button>
-        </div> */}
-        <div style={{bottom: "0", position: "fixed", width: "100%"}}>
-          <div className = "card white" style={{margin: "0"}}>
-            <div className = "row" style={{display: "flex", alignItems: "center", margin: "0"}}>
-              <div className = "col s2"><input type="text" placeholder="Contender/ Proposal ID" onChange={this.onHashChange.bind(this)}/></div>
-              <div style ={{width: "280px", display: "flex",justifyContent:"space-evenly"}}>
-                  <Button onClick={this.expireApplyStage.bind(this)} className="grey">Application</Button>
-                  <Button onClick={this.expireProposalStage.bind(this)} className="grey">Proposal</Button>
-              </div>
-              <div className = "col s2"><input type="text" placeholder="Challenge ID" onChange={this.onChallengeIDChange.bind(this)}/></div>
-              <div style ={{width: "280px", display: "flex",justifyContent:"space-evenly"}}>
-                  <Button onClick={this.expireCommitStage.bind(this)} className="grey">Commit</Button>
-                  <Button onClick={this.expireRevealStage.bind(this)} className="grey">Reveal</Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        {renderDevTool}
         
           
         

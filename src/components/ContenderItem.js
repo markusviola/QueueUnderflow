@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 
-
 class ContenderItem extends Component {
 
     constructor(){
         super();
 
         this.state = {
-            salt: 0,
-            tokenValue: 0
+            
         }
     }
 
@@ -23,44 +21,16 @@ class ContenderItem extends Component {
         });
     }
 
-    onVoteUpClicked(){
-        this.props.instance.PLCRCommitVote(this.props.item.challengeID, 1, this.state.salt, this.state.tokenValue)
-        .then((isTransaction) => {
-            this.props.toggleProcess(isTransaction);
-        });
+    onVoteRevealClicked(){
+        this.props.selectedChallengeToReveal(this.props.item.challengeID)
     }
 
-    onVoteDownClicked(){
-        this.props.instance.PLCRCommitVote(this.props.item.challengeID, 0, this.state.salt, this.state.tokenValue)
-        .then((isTransaction) => {
-            this.props.toggleProcess(isTransaction);
-        });
+    onVoteCommitClicked(){
+        this.props.selectedChallengeToCommit(this.props.item.challengeID)
     }
 
-    onRevealVoteUpClicked(){
-        this.props.instance.PLCRRevealVote(this.props.item.challengeID, 1, this.state.salt)
-        .then((isTransaction) => {
-            this.props.toggleProcess(isTransaction);
-        });
-    }
-
-    onRevealVoteDownClicked(){
-        this.props.instance.PLCRRevealVote(this.props.item.challengeID, 0, this.state.salt)
-        .then((isTransaction) => {
-            this.props.toggleProcess(isTransaction);
-        });
-    }
-
-    onSaltChange(evt){
-        this.setState({
-            salt: evt.target.value
-        })
-    }
-
-    onTokenAmountChange(evt){
-        this.setState({
-            tokenValue: evt.target.value
-        })
+    printHashes(){
+        console.log("Contender Hash: "+this.props.item.contenderHash+"  Challenge ID: "+this.props.item.challengeID);
     }
 
     render() {
@@ -69,79 +39,70 @@ class ContenderItem extends Component {
         let challengeButton = "";
         let updateButton = "";
         let votingButtons = "";
-        let commitState = "";
-        let revealState = "";
+        let commitState = "--";
+        let revealState = "--";
         let applicationState = this.props.item.applicationExpiry;
-        let hash = "";
-
-        if(this.props.showHash){
-            hash = this.props.item.contenderHash;
-        }
+    
 
         if(this.props.item.isChampion === true && this.props.item.isConcluded) {
-            challengeState = "is already a champion!";
-            applicationState = "Challenge passed!"
-            challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Rechallenge!</button><br/></div>;
+            challengeState = "CHAMPION";
+            applicationState = "Done"
+            challengeButton = <div><a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onChallengeClicked.bind(this)}>
+            <i className="material-icons right">remove_circle_outline</i><b>Rechallenge</b></a></div>
         }
         else if(this.props.item.challengeID === 0) {
             if(this.props.item.applicationExpiry === "Process finished."){
-                challengeState = "is in pending state."
-                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+                applicationState = "Done"
+                challengeState = "PENDING"
+                updateButton = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onUpdateStatusClicked.bind(this)}>
+                <i className="material-icons right">done_all</i><b>Conclude</b></a>
             }
             else {
-                challengeState = "remains unchallenged."
-                challengeButton = <div><button onClick={this.onChallengeClicked.bind(this)}>Challenge!</button><br/></div>;
+                challengeState = "UNCHALLENGED"
+                challengeButton = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onChallengeClicked.bind(this)}>
+                <i className="material-icons right">remove_circle_outline</i><b>Challenge</b></a>
             }
                                     
         }
         else { 
-            applicationState = "";
+            applicationState = "--";
             if(this.props.item.commitVoteExpiry === "Voting duration concluded." &&
                this.props.item.revealVoteExpiry === "Reveal duration concluded."){
-                challengeState = "is in pending state."
-                commitState = <div>{this.props.item.commitVoteExpiry}<br/></div>;
-                revealState = <div>{this.props.item.revealVoteExpiry}<br/></div>;
-                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+                challengeState = "PENDING"
+                commitState = <div>Done</div>;
+                revealState = <div>Done<br/></div>;
+                updateButton = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onUpdateStatusClicked.bind(this)}>
+                <i className="material-icons right">done_all</i><b>Conclude</b></a>
             }
             else {
-                challengeState = "has been challenged!";
+                challengeState = "CHALLENGED";
                 commitState = this.props.item.commitVoteExpiry;
                 revealState = this.props.item.revealVoteExpiry;
                 if(this.props.item.commitVoteExpiry !== "Voting duration concluded."){
-                    revealState = "Reveal commences after voting stage.";
-                    votingButtons = <div style={{display: "flex", justifyContent: "flex-start", width: "400px"}}>
-                                <input type="number" placeholder="Salt" style={{width: "50px"}} onChange={this.onSaltChange.bind(this)}/>
-                                <input type="number" placeholder="No. of Votes to Stake" style={{width: "100"}} onChange={this.onTokenAmountChange.bind(this)}/>
-                                <button onClick={this.onVoteUpClicked.bind(this)}>Vote Up</button>
-                                <button onClick={this.onVoteDownClicked.bind(this)}>Vote Down</button>
-                            </div>
+                    revealState = "Waiting";
+                    votingButtons = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onVoteCommitClicked.bind(this)}>
+                    <i className="material-icons right">thumbs_up_down</i><b>Commit Vote</b></a>
                 }
                 else{
-                    votingButtons = <div style={{display: "flex", justifyContent: "flex-start", width: "400px"}}>
-                                <input type="number" placeholder="Confirm salt" style={{width: "90px"}} onChange={this.onSaltChange.bind(this)}/>
-                                <button onClick={this.onRevealVoteUpClicked.bind(this)}>Vote Up</button>
-                                <button onClick={this.onRevealVoteDownClicked.bind(this)}>Vote Down</button>
-                            </div>
+                    commitState = <div>Done</div>;
+                    votingButtons = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onVoteRevealClicked.bind(this)}>
+                    <i className="material-icons right">thumbs_up_down</i><b>Reveal Vote</b></a>
                 }
             }
         }
 
-    return (
-        <div className="ContenderItem">
-            <br/>
-            {hash}<br/>
-            Challenge ID：{this.props.item.challengeID}     <br/>
-            <strong>{this.props.item.contender}</strong> {challengeState} <br/>
-            {applicationState}
-            {commitState}
-            {revealState}
-            {votingButtons}
-            {challengeButton}
-            {updateButton}
-            <br/>
-            <div className="divider"></div>
-        </div>
-    );
+    return [
+        <tr key className="ContenderItem">
+            <td onClick={this.printHashes.bind(this)}><b>{this.props.item.contender}</b></td>
+            <td><b>{challengeState}</b></td>
+            <td>{applicationState}</td>
+            <td>{commitState}</td>
+            <td>{revealState}</td>
+            <td className="right">
+                {challengeButton}{votingButtons}{updateButton}
+            </td>
+        </tr>
+    ];
   }
 }
 

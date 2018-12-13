@@ -28,7 +28,7 @@ class Champions extends Component {
             
     return (
         <div className="Champions">
-            <h6><b>Current Champions</b></h6>
+            <h6><b><i className="small material-icons right">thumb_up</i>Current Consultants</b></h6>
             <div className="divider"></div>
             <br/>
             {items}

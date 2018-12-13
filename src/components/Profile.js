@@ -41,7 +41,7 @@ class Profile extends Component {
                 currentProfileType = "Token Voter";
             }
         }
-        this.setState({userChampions: champions, profileType: currentProfileType}, ()=>{console.log(this.state.userChampions)})
+        this.setState({userChampions: champions, profileType: currentProfileType}, ()=>{})
         
     }
 
