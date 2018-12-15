@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import {Card} from 'react-materialize';
 
 class ChallengerForm extends Component {
 
@@ -37,23 +37,27 @@ class ChallengerForm extends Component {
 
     return (
         <div className="ChallengerForm">
-            <h3>Challenge A Contender!</h3>
-            <form onSubmit={this.handleSubmit.bind(this)}>
-                <div style={{width: "300px"}}>
-                    <b><label>You are challenging {this.props.selectedContender.contender}!</label></b><br/><br/>
+            <div className="card grey-text text-lighten-5 z-depth-0" style={{backgroundColor: "#7f2099", margin: 0,paddingTop: "1px", paddingBottom: "1px", paddingLeft: "30px", borderTopLeftRadius: "25px", borderBottomRightRadius: "25px"}}><h4>Challenge An Applicant</h4></div>
+            <Card actions={[<a href='#' className="teal-text text-lighten-1" onClick={this.handleSubmit.bind(this)}><b>Confirm Challenge</b></a>]}>
+                <div style={{color: "#999999"}}>
+                    <div>
+                        Challenged Applicant:<br/>
+                        <input type="text" value={this.props.selectedContender.contender} readOnly/>
+                    </div>
+                    <div><br/>
+                        Challenge Stake:<br/>
+                        <input type="text" value={this.state.minDeposit} readOnly/>
+                    </div>
+                    <div><br/>
+                        Statement of Disapproval:<br/><br/>
+                        <textarea onChange={this.onStatementChange.bind(this)} placeholder=" Input any evidence or links..." style={{width:"100%", height:"200px"}} />
+                    </div>
                 </div>
-                <div>
-                    <label>Challenge Stake:</label><br/>
-                    <input type="text" value={this.state.minDeposit} ref="stake" disabled/>
-                </div>
-                <div>
-                    <label>Statement of Disapproval:</label><br/> 
-                    <textarea onChange={this.onStatementChange.bind(this)} placeholder="Input evidence links..." style={{width:"450px", height:"200px"}} />
-                </div>
-                <br/>
-                <button type="submit">Submit</button>
-            </form>    
+            </Card>
         </div>
+
+
+        
     );
   }
 }

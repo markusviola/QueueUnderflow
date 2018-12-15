@@ -4,6 +4,7 @@ import AsProposalChallengerItem from './ProfileComponents/AsProposalChallengerIt
 import AsContenderVoterItem from './ProfileComponents/AsContenderVoterItem';
 import AsProposalVoterItem from './ProfileComponents/AsProposalVoterItem';
 import AsChampionItem from './ProfileComponents/AsChampionItem';
+import {Collapsible, CollapsibleItem, Card} from 'react-materialize'
 
 
 class Profile extends Component {
@@ -20,28 +21,36 @@ class Profile extends Component {
             challengedProposalsStatus: false,
             votedContendersStatus: false,
             votedProposalsStatus: false,
-            profileType: "Regular",
+            profileType: "Identifying Profile...",
             userChampions: [],
             wonVotedContenders: [],
-            wonVotedProposals: []
+            wonVotedProposals: [],
+            revealCard: false,
+            revealChallengeID: 0,
+            salt: 0
+
         }
     }
 
     async determineUserType(){
 
-        let currentProfileType = this.state.profileType;
+        let currentProfileType = "Regular User";
 
         let champions = await this.props.currentContenders.filter((item) => {
             return (item.contender === "" || (!item.isChampion || !(item.issuer === this.props.instance.getCurrentAccount()))) ? false: true})
         
-        if(champions.length > 0) currentProfileType = "Champion";
+        if(champions.length > 0) currentProfileType = "Consultant";
         else{
             let tokenRights = await this.props.instance.PLCRGetVotingBalance();    
             if(tokenRights > 0) {
                 currentProfileType = "Token Voter";
             }
         }
-        this.setState({userChampions: champions, profileType: currentProfileType}, ()=>{})
+
+        if(champions.length > 0){
+            this.setState({userChampions: [champions[0]]});    
+        }
+        this.setState({profileType: currentProfileType}, ()=>{})
         
     }
 
@@ -205,128 +214,185 @@ class Profile extends Component {
         });      
     }
 
+    onRevealChallenge(id){
+        this.setState({
+            revealCard: true,
+            revealChallengeID: id
+        })
+    }
+
+    onRevealVoteUpClicked(){
+        this.props.instance.PLCRRevealVote(this.state.revealChallengeID, 1, this.state.salt)
+        .then((isTransaction) => {
+            this.props.onProcess(isTransaction);
+        });
+    }
+
+    onRevealVoteDownClicked(){
+        this.props.instance.PLCRRevealVote(this.state.revealChallengeID, 0, this.state.salt)
+        .then((isTransaction) => {
+            this.props.onProcess(isTransaction);
+        });
+    }
+
+    cancelCommit(){
+        this.setState({
+            revealCard: false,
+            salt: 0
+        })
+    }
+
+    onSaltChange(evt){
+        this.setState({
+            salt: evt.target.value
+        })
+    }
     
     render() {
-        let processA = "";
-        let processB = "";
-        let processC = "";
-        let processD = "";
-        let championHeader = "";
+        let process = "";
         let proposalIncentivesButton = "";
         let contenderIncentivesButton = "";
+        let items;
+        let itemsA;
+        let itemsB;
+        let itemsC;
+        let itemsD;
+        let userData = "";
+        let revealCard = "";
+
+        if(this.state.revealCard){
+            revealCard = <div className="vote-card" style={{zIndex: "2"}}>
+                <Card className="z-depth-2 white" actions={[
+                <a href='#' className="teal-text text-lighten-1" onClick={this.onRevealVoteUpClicked.bind(this)}><b>Vote Up</b></a>,
+                <a href='#' className="teal-text text-lighten-1" onClick={this.onRevealVoteDownClicked.bind(this)}><b>Vote Down</b></a>,
+                <a href='#' className="teal-text text-lighten-1" onClick={this.cancelCommit.bind(this)}><b>Close</b></a>]}>
+                    <h4 style={{color: "#666666"}}>Reveal Vote</h4>
+                    <div className="divider"></div>
+                    <br/>
+                    <div>
+                        <label>Committed Vote Key:</label><br/>
+                        <input type="number" placeholder="Input your vote key" onChange={this.onSaltChange.bind(this)}/>
+                    </div>
+                </Card></div>
+        }
 
         if(this.state.wonVotedContenders.length > 0) {
-            contenderIncentivesButton = <button onClick={this.collectContenderIncentives.bind(this)}>Collect Incentives</button>;
+            contenderIncentivesButton = <div><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.collectContenderIncentives.bind(this)}>
+            <i className="material-icons right">card_giftcard</i><b>Collect Incentives</b></a><br/><br/></div>
+            
         }
         if(this.state.wonVotedProposals.length > 0) {
-            proposalIncentivesButton = <button onClick={this.collectProposalIncentives.bind(this)}>Collect Incentives</button>;
+            proposalIncentivesButton = <div><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.collectProposalIncentives.bind(this)}>
+            <i className="material-icons right">card_giftcard</i><b>Collect Incentives</b></a><br/><br/></div>
+            
         }
         
-        if(this.props.dataStatusA === true){
-            processA = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
+        if(this.props.dataStatusA === true || this.props.dataStatusB === true || this.state.votedContendersStatus === false || this.state.votedProposalsStatus === false){
+            process = <div className="progress" style ={{margin: "0"}}>
+                        <div className="indeterminate"></div>
+                    </div>
         }
-        if(this.props.dataStatusB === true){
-            processB = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
-        }
-        if(this.state.votedContendersStatus === false){
-            processC = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
-        }
-        if(this.state.votedProposalsStatus === false){
-            processD = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
-        }
-        if(this.state.userChampions.length > 0){
+        else{
+            if(this.state.userChampions){
+                items = this.state.userChampions.map(item => {
+                    return (
+                        <AsChampionItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={item.key} item = {item}/>
+                    )
+                });
+            }
+    
             
-            championHeader = <h3>Persona</h3>;
-        }
+            if(this.props.currentContenders){
+                itemsA = this.props.currentContenders.filter(
+                    (itemA) => {
+                        if(itemA.contender === "" ||
+                        ((itemA.challengeID === 0 || itemA.challenger === "") || itemA.challenger !== this.props.instance.getCurrentAccount())) return false;
+                        else return true;
+                    }).map(itemA => {
+                    return (
+                        <AsContenderChallengerItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance}  key={itemA.key} itemA = {itemA}/>
+                    )
+                });
+            }
+    
+            
+            if(this.props.currentProposals){
+                itemsB = this.props.currentProposals.filter(
+                    (itemB) => {
+                        if(itemB.paramName === "" ||
+                        ((itemB.challengeID === 0 || itemB.challenger === "") || itemB.challenger !== this.props.instance.getCurrentAccount())) return false;
+                        else return true;
+                    }).map(itemB => {
+                    return (
+                        <AsProposalChallengerItem  toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={itemB.key} itemB = {itemB}/>
+                    )
+                });
+            }
+    
+            
+            if(this.state.votedContenders){
+                itemsC = this.state.votedContenders.map(itemC => {
+                    return (
+                        <AsContenderVoterItem selectedChallengeToReveal={this.onRevealChallenge.bind(this)} toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={itemC.key} itemC = {itemC}/>
+                    )
+                });
+            }
+    
+            
+            if(this.state.votedProposals){
+                itemsD = this.state.votedProposals.map(itemD => {
+                    return (
+                        <AsProposalVoterItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={itemD.key} itemD = {itemD}/>
+                    )
+                });
+            }
 
-        let items;
-        if(this.state.userChampions){
-            items = this.state.userChampions.map(item => {
-                return (
-                    <AsChampionItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={item.key} item = {item}/>
-                )
-            });
+            userData = "teal-text text-lighten-1 bold";
         }
-
-        let itemsA;
-        if(this.props.currentContenders){
-            itemsA = this.props.currentContenders.filter(
-                (itemA) => {
-                    if(itemA.contender === "" ||
-                    ((itemA.challengeID === 0 || itemA.challenger === "") || itemA.challenger !== this.props.instance.getCurrentAccount())) return false;
-                    else return true;
-                }).map(itemA => {
-                return (
-                    <AsContenderChallengerItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance}  key={itemA.key} itemA = {itemA}/>
-                )
-            });
-        }
-
-        let itemsB;
-        if(this.props.currentProposals){
-            itemsB = this.props.currentProposals.filter(
-                (itemB) => {
-                    if(itemB.paramName === "" ||
-                    ((itemB.challengeID === 0 || itemB.challenger === "") || itemB.challenger !== this.props.instance.getCurrentAccount())) return false;
-                    else return true;
-                }).map(itemB => {
-                return (
-                    <AsProposalChallengerItem  toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={itemB.key} itemB = {itemB}/>
-                )
-            });
-        }
-
-        let itemsC;
-        if(this.state.votedContenders){
-            itemsC = this.state.votedContenders.map(itemC => {
-                return (
-                    <AsContenderVoterItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={itemC.key} itemC = {itemC}/>
-                )
-            });
-        }
-
-        let itemsD;
-        if(this.state.votedProposals){
-            itemsD = this.state.votedProposals.map(itemD => {
-                return (
-                    <AsProposalVoterItem toggleProcess = {this.handleToggleProcess.bind(this)} instance = {this.props.instance} key={itemD.key} itemD = {itemD}/>
-                    
-                )
-            });
-        }
+        
 
     return (
         <div className="Profile">
-
-            <h3>Profile</h3>
-            <div className="divider"></div>
-            <strong>User Type: {this.state.profileType}</strong><br/>
-            {championHeader}
-            {items}
             
-
-            <h3>Contenders</h3>
-            <div className="divider"></div>
-            <b>Challenged:</b>
-            {processA}
-            {itemsA}
-
-            <b>Voted:</b>
-            {contenderIncentivesButton}<br/><br/>
-            {processB}
-            {itemsC}
-
-            <h3>Parameter Proposals</h3>
-            <div className="divider"></div>
-            <b>Challenged:</b>
-            {processC}
-            {itemsB}
-
-            <b>Voted:</b>
-            {proposalIncentivesButton}<br/><br/>
-            {processD}
-            {itemsD}
-            
+            <div className="card grey-text text-lighten-5 z-depth-0" style={{backgroundColor: "#7f2099", margin: 0,paddingTop: "1px", paddingBottom: "1px", paddingLeft: "30px", borderTopLeftRadius: "25px", borderBottomRightRadius: "25px"}}><h4>{this.state.profileType}</h4></div>
+            <div className="card">
+                
+                <div style={{color: "#999999"}}>
+                    {revealCard}
+                    <div style={{paddingLeft:"30px", paddingTop: "15px"}}>
+                        {items} 
+                        <br/>
+                    </div>
+                    <div className = {userData}>
+                    <Collapsible className="z-depth-0">
+                        {process}
+                        <CollapsibleItem header='Challenged Applicants' icon='format_list_numbered'>
+                            <div style={{color: "#666666"}}>
+                                {itemsA}
+                            </div>
+                        </CollapsibleItem>
+                        <CollapsibleItem header='Voted Applicants' icon='format_list_numbered'>
+                            <div style={{color: "#666666"}}>
+                                {contenderIncentivesButton}
+                                {itemsC}
+                            </div>
+                        </CollapsibleItem>
+                        <CollapsibleItem header='Challenged System Petition' icon='settings'>
+                            <div style={{color: "#666666"}}>
+                                {itemsB}
+                            </div>
+                        </CollapsibleItem>
+                        <CollapsibleItem header='Voted System Petition' icon='settings'>
+                            <div style={{color: "#666666"}}>
+                                {proposalIncentivesButton}<br/>
+                                {itemsD}
+                            </div>
+                        </CollapsibleItem>
+                    </Collapsible>
+                    
+                    </div>
+                </div>
+            </div>
         </div>
     );
   }

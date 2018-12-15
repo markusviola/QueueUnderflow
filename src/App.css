@@ -10,6 +10,7 @@
   font-family: 'google_sansregular';
 }
 
+
 .nav-wrapper{
   padding-left: 5%;
   padding-right: 3%;
@@ -26,9 +27,9 @@
 }
 
 .logo-image {
-  height: 27%;
-  width: 27%; 
-  margin-top: 10px;
+  height: 24%;
+  width: 24%; 
+  margin-top: 13px;
   display: flex;
   align-items: center;
 }
@@ -53,3 +54,4 @@
   bottom: 88%;
   left:40%;  
 }
+

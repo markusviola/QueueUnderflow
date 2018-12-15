@@ -45,21 +45,21 @@ class ContenderItem extends Component {
     
 
         if(this.props.item.isChampion === true && this.props.item.isConcluded) {
-            challengeState = "CHAMPION";
+            challengeState = <div style={{color: "#e06666"}}>CONSULTANT</div>;
             applicationState = "Done"
-            challengeButton = <div><a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onChallengeClicked.bind(this)}>
-            <i className="material-icons right">remove_circle_outline</i><b>Rechallenge</b></a></div>
+            challengeButton = <div><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onChallengeClicked.bind(this)}>
+            <i className="material-icons right">replay</i><b>Rechallenge</b></a></div>
         }
         else if(this.props.item.challengeID === 0) {
             if(this.props.item.applicationExpiry === "Process finished."){
                 applicationState = "Done"
                 challengeState = "PENDING"
-                updateButton = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onUpdateStatusClicked.bind(this)}>
+                updateButton = <a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onUpdateStatusClicked.bind(this)}>
                 <i className="material-icons right">done_all</i><b>Conclude</b></a>
             }
             else {
                 challengeState = "UNCHALLENGED"
-                challengeButton = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onChallengeClicked.bind(this)}>
+                challengeButton = <a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onChallengeClicked.bind(this)}>
                 <i className="material-icons right">remove_circle_outline</i><b>Challenge</b></a>
             }
                                     
@@ -71,7 +71,7 @@ class ContenderItem extends Component {
                 challengeState = "PENDING"
                 commitState = <div>Done</div>;
                 revealState = <div>Done<br/></div>;
-                updateButton = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onUpdateStatusClicked.bind(this)}>
+                updateButton = <a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onUpdateStatusClicked.bind(this)}>
                 <i className="material-icons right">done_all</i><b>Conclude</b></a>
             }
             else {
@@ -80,20 +80,20 @@ class ContenderItem extends Component {
                 revealState = this.props.item.revealVoteExpiry;
                 if(this.props.item.commitVoteExpiry !== "Voting duration concluded."){
                     revealState = "Waiting";
-                    votingButtons = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onVoteCommitClicked.bind(this)}>
+                    votingButtons = <a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onVoteCommitClicked.bind(this)}>
                     <i className="material-icons right">thumbs_up_down</i><b>Commit Vote</b></a>
                 }
                 else{
                     commitState = <div>Done</div>;
-                    votingButtons = <a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onVoteRevealClicked.bind(this)}>
+                    votingButtons = <a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onVoteRevealClicked.bind(this)}>
                     <i className="material-icons right">thumbs_up_down</i><b>Reveal Vote</b></a>
                 }
             }
         }
 
     return [
-        <tr key className="ContenderItem">
-            <td onClick={this.printHashes.bind(this)}><b>{this.props.item.contender}</b></td>
+        <tr key className="ContenderItem" style={{color: "#666666"}}>
+            <td  style={{color: "#4f4f4f"}} onClick={this.printHashes.bind(this)}><b>{this.props.item.contender}</b></td>
             <td><b>{challengeState}</b></td>
             <td>{applicationState}</td>
             <td>{commitState}</td>

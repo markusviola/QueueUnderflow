@@ -51,7 +51,7 @@ class Proposals extends Component {
 
     return (
         <div className="Proposals">
-            <h3>Proposals</h3>
+            <h3>System Proposal</h3>
             <div className="divider"></div>
             <br/>
             {hashButton}

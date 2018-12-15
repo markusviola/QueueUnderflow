@@ -11,18 +11,28 @@ class AnswerForm extends Component {
         }
     }
 
-    componentDidMount(){
-    }
-
     handleSubmit(e){
-        const que = {
-            answer: this.state.statement,
-            answeredBy: this.props.instance.getCurrentAccount(),
-            answeredByName: "Lunafreia",
-            question_id: this.props.questionID
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
         };
 
-        axios.post(`http://localhost:5000/api/answer/create`, que)
+        const que = {
+            answer: String(this.state.statement),
+            answeredBy: String(this.props.instance.getCurrentAccount()),
+            answeredByName: String(this.props.currentChampions[0].contender),
+            question_id: parseInt(this.props.questionID)
+        };
+
+        console.log("Statement: "+this.state.statement)
+        console.log("Answered By: "+this.props.instance.getCurrentAccount())
+        console.log("Answered By Name: "+this.props.currentChampions[0].contender)
+        console.log("Question ID: "+this.props.questionID)
+
+        axios.post(`http://localhost:5000/api/answer/create`, que, config)
         .then(res => {
             alert(res.data);
         })
@@ -35,15 +45,13 @@ class AnswerForm extends Component {
     
     render() {
         return (
-            <div className="AnswerForm">
-                <form onSubmit={this.handleSubmit.bind(this)}>
-                    <div>
-                        <label>Give your answer:</label><br/>
-                        <textarea onChange={this.onAnswerChange.bind(this)} placeholder="Input your answer..." style={{width:"650px", height:"190px"}} />
+            <div className="AnswerForm" style={{paddingLeft: "10px"}}>
+                    <div style={{marginBottom: "7px"}}>
+                        Provide your answer:<br/>
+                        <textarea onChange={this.onAnswerChange.bind(this)} placeholder="Write your answer here..." style={{marginTop: "5px", width:"650px", height:"190px"}} />
                     </div>
-                    <br/>
-                    <button type="submit">Submit</button>
-                </form>    
+                    <a className="waves-effect waves-light btn" onClick={this.handleSubmit.bind(this)}>
+                    <i className="material-icons right">create</i>Submit Answer</a>
             </div>
         );
     }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import QuestionItem from './QuestionItem';
 import axios from 'axios';
+import Divider from 'react-materialize/lib/Divider';
 
 class Questions extends Component {
 
@@ -20,7 +21,7 @@ class Questions extends Component {
         axios.get(`http://localhost:5000/api/question`)
         .then(res => {
             const questions = res.data;
-            this.setState({ currentQuestions: questions }, () => {console.log(this.state.currentQuestions)});
+            this.setState({ currentQuestions: questions }, () => {});
         })
     }
 
@@ -41,9 +42,11 @@ class Questions extends Component {
         }
 
     return (
-        <div className="Questions">
-            <h3>Questions</h3>
+        <div className="Questions" style={{color: "#666666"}}>
+            <h4 className=""><b>Questions</b></h4>
+            <div className="divider" style={{height: "2px"}}></div>
             {items}
+            
         </div>
     );
   }

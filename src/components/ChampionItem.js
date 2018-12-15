@@ -11,14 +11,14 @@ class ChampionItem extends Component {
 
         let challengeButton = "";
         if(this.props.item.isConcluded){
-            challengeButton = <div><a className="waves-effect waves-light teal-text text-lighten-2" onClick={this.onChallengeClicked.bind(this)}>
+            challengeButton = <div className="z-depth-0"><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onChallengeClicked.bind(this)}>
             <i className="tiny material-icons right">thumb_down</i><b>Challenge</b></a></div>;
         }
         else challengeButton = <div>Being challenged!</div>
         
                 
     return (
-        <div className="ChampionItem">
+        <div className="ChampionItem" style={{color: "#666666"}}>
             <br/>
             <b>{this.props.item.contender}</b><br/>
             {challengeButton}

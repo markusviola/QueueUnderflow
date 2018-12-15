@@ -29,7 +29,8 @@ class AsContenderChallengerItem extends Component {
             }
             else{
                 challengeStatus = <div>The voting is finished.<br/></div>
-                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+                updateButton = <div><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onUpdateStatusClicked.bind(this)}>
+                <i className="material-icons right">done_all</i><b>Conclude</b></a><br/></div>
             }
         }
         else{
@@ -38,7 +39,7 @@ class AsContenderChallengerItem extends Component {
                    
     return (
         <div className="AsContenderChallengerItem">
-            <strong>{this.props.itemA.contender}</strong><br/>
+            <h6><b>{this.props.itemA.contender}</b></h6>
             {challengeStatus}
             {updateButton}
             {incentiveAmount}

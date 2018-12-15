@@ -12,7 +12,17 @@ class Champions extends Component {
 
         let process = "";
         if(this.props.dataStatus === true){
-            process = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
+            process = <div><br/><div className="preloader-wrapper small active">
+            <div className="spinner-layer">
+              <div className="circle-clipper left">
+                <div className="circle"></div>
+              </div><div className="gap-patch">
+                <div className="circle"></div>
+              </div><div className="circle-clipper right">
+                <div className="circle"></div>
+              </div>
+            </div>
+          </div></div>
         }
 
         let items;
@@ -28,9 +38,8 @@ class Champions extends Component {
             
     return (
         <div className="Champions">
-            <h6><b><i className="small material-icons right">thumb_up</i>Current Consultants</b></h6>
+            <h6 style={{color: "#666666"}}><b><i className="small material-icons right teal-text text-darken-1">thumb_up</i>Current Consultants</b></h6>
             <div className="divider"></div>
-            <br/>
             {items}
             {process}
         </div>

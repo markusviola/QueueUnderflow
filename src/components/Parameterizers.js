@@ -27,7 +27,7 @@ class Parameterizers extends Component {
 
     return (
         <div className="Parameterizers">
-            <h3>Parameterizers</h3>
+            <h3>System Parameters</h3>
             <div className="divider"></div>
             <br/>
             {process}

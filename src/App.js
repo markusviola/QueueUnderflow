@@ -69,7 +69,7 @@ class App extends Component {
       contract.registryAddress)
       .then(()=>{
         this.setState({envStatus: true}, ()=>{
-          this.setState({renderRegisterForm: true},()=>{
+          this.setState({renderQuestions: true},()=>{
             this.state.env.PLCRGetTokenAddress()
             .then((tokenAddress)=> {
               console.log("EIP20 Token: "+tokenAddress);
@@ -468,7 +468,7 @@ class App extends Component {
     let renderChallengerForm = "";
     let renderProposalForm = "";
     let renderProposalChallengerForm = "";
-    let renderChampions = renderChampions = <Champions currentContenders = {this.state.currentContenders} dataStatus = {this.state.contenderProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
+    let renderChampions = <Champions currentContenders = {this.state.currentContenders} dataStatus = {this.state.contenderProcessStatus} onProcess = {this.toggleProcess.bind(this)} challengeClicked = {this.handleChallenge.bind(this)} instance = {this.state.env}/>
     let renderContenders = "";
     let renderParameterizers = "";
     let renderProposals = "";
@@ -511,8 +511,6 @@ class App extends Component {
 
     return (
       <div className="App">
-
-        
         <div className="navbar-fixed">
           <ul id="dropdown1" className="dropdown-content">
             <li><a href="#!">Ask Question</a></li>
@@ -521,35 +519,35 @@ class App extends Component {
           </ul>
           <nav className="nav-extended white z-depth-1">
             <div className="nav-wrapper">
-              <a href="#" className="brand-logo"><img className="logo-image" src="logo.png"/><div style={{display: "table", alignItems: "center", width: "100%"}}>
+              <a href="#" className="brand-logo"><img className="logo-image" src="logo.png"/><div style={{display: "flex", alignItems: "center", width: "100%"}}>
               </div></a>
               <ul id="nav-mobile" className="right hide-on-med-and-down">
-                <li><a href="#" className="grey-text text-darken-1" onClick={this.renderComponent.bind(this, "profile")}><i className="material-icons right">person</i>Persona</a></li>
+                <li><a href="#" className="teal-text text-darken-1" onClick={this.renderComponent.bind(this, "profile")}><i className="material-icons right">person</i>Profile</a></li>
               </ul>
             </div>
             {process}
           </nav>
         </div>
-        <div className = "main-sidebar-wrapper grey-text text-darken-1 white">
+        <div className = "main-sidebar-wrapper purple-text text-darken-1 white">
           <Collapsible className ="main-sidebar">
           <CollapsibleItem header='Q&amp;A' icon='question_answer'>
             <div className="collection">
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "questionForm")}>Ask Question</a>
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "questions")}>Questions</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.renderComponent.bind(this, "questionForm")}>Ask Question</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.renderComponent.bind(this, "questions")}>Questions</a>
             </div>
           </CollapsibleItem>
           <CollapsibleItem header='Registry' icon='format_list_numbered'>
             <div className="collection">
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "registerForm")}>Become A Consultant</a>
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "contenders")}>Contenders</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.renderComponent.bind(this, "registerForm")}>Become A Consultant</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.renderComponent.bind(this, "contenders")}>Applicant List</a>
             </div>
           </CollapsibleItem>
           <CollapsibleItem header='System' icon='settings'>
             <div className="collection">
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "proposalForm")}>Propose A Value</a>
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "proposals")}>Proposals</a>
-              <a href="#!" className="collection-item grey-text" onClick={this.renderComponent.bind(this, "parameterizers")}>Parameterizers</a>
-              <a href="#!" className="collection-item grey-text" onClick={this.activateDevTool.bind(this)}>Developer Tool</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.renderComponent.bind(this, "proposalForm")}>Make A System Proposal</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.renderComponent.bind(this, "proposals")}>System Proposals</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.renderComponent.bind(this, "parameterizers")}>System Parameters</a>
+              <a href="#!" className="collection-item grey-text text-darken-1" onClick={this.activateDevTool.bind(this)}>Developer Tool</a>
             </div>
           </CollapsibleItem>
           </Collapsible>
@@ -582,14 +580,12 @@ class App extends Component {
         {renderQuestionForm}
         {renderQuestion}
         </div>
+
         <br/>
         <br/>
         <br/>
         {renderDevTool}
         
-          
-        
-
       </div>
     );
   }

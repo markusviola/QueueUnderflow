@@ -18,18 +18,8 @@ class AsContenderVoterItem extends Component {
         });
     }
 
-    onRevealVoteUpClicked(){
-        this.props.instance.PLCRRevealVote(this.props.itemC.challengeID, 1, this.state.salt)
-        .then((isTransaction) => {
-            this.props.toggleProcess(isTransaction);
-        });
-    }
-
-    onRevealVoteDownClicked(){
-        this.props.instance.PLCRRevealVote(this.props.itemC.challengeID, 0, this.state.salt)
-        .then((isTransaction) => {
-            this.props.toggleProcess(isTransaction);
-        });
+    onVoteRevealClicked(){
+        this.props.selectedChallengeToReveal(this.props.itemC.challengeID)
     }
 
     onRescueTokensClicked(){
@@ -37,12 +27,6 @@ class AsContenderVoterItem extends Component {
         .then((isTransaction) => {
             this.props.toggleProcess(isTransaction);
         });
-    }
-
-    onSaltChange(evt){
-        this.setState({
-            salt: evt.target.value
-        })
     }
 
     render() {
@@ -55,6 +39,7 @@ class AsContenderVoterItem extends Component {
         let commitState = "";
         let revealState = "";
         let contenderName = this.props.itemC.contender;
+        
 
         if(this.props.itemC.isConcluded){
             challengeStatus = <div>A challenge has been concluded.<br/></div>
@@ -73,7 +58,8 @@ class AsContenderVoterItem extends Component {
             else{
                 if(this.props.itemC.isTokenLocked){
                     incentiveAmount = <div>You missed to reveal your vote.<br/></div>
-                    rescueButton = <div><button onClick={this.onRescueTokensClicked.bind(this)}>Rescue Tokens</button><br/></div>
+                    rescueButton = <div><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onRescueTokensClicked.bind(this)}>
+                    <i className="material-icons right">restore</i><b>Rescue Tokens</b></a><br/></div>
                 }
                 else{
                     challengeStatus = "";
@@ -85,23 +71,22 @@ class AsContenderVoterItem extends Component {
             if(this.props.itemC.commitVoteExpiry === "Voting duration concluded." &&
                this.props.itemC.revealVoteExpiry === "Reveal duration concluded."){
                 challengeStatus = <div>The challenge is in pending state.<br/></div>
-                commitState = <div>{this.props.itemC.commitVoteExpiry}<br/></div>;
-                revealState = <div>{this.props.itemC.revealVoteExpiry}<br/></div>;
-                updateButton = <div><button onClick={this.onUpdateStatusClicked.bind(this)}>Conclude Application</button><br/></div>
+                commitState = <div>Commit period concluded.<br/></div>;
+                revealState = <div>Reveal period concluded.<br/></div>;
+                updateButton = <div><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onUpdateStatusClicked.bind(this)}>
+                <i className="material-icons right">done_all</i><b>Conclude</b></a><br/></div>
             }
             else{
                 challengeStatus = <div>The voting is still on going.<br/></div>
                 commitState = this.props.itemC.commitVoteExpiry;
                 revealState = this.props.itemC.revealVoteExpiry;
                 if(this.props.itemC.commitVoteExpiry !== "Voting duration concluded."){
-                    revealState = <div>Reveal commences after voting stage.<br/></div>
+                    revealState = <div>Reveal commences after commit period.<br/></div>
                 }
                 else{
-                    votingButtons = <div style={{display: "flex", justifyContent: "flex-start", width: "400px"}}>
-                                <input type="number" placeholder="Confirm salt" style={{width: "90px"}} onChange={this.onSaltChange.bind(this)}/>
-                                <button onClick={this.onRevealVoteUpClicked.bind(this)}>Vote Up</button>
-                                <button onClick={this.onRevealVoteDownClicked.bind(this)}>Vote Down</button>
-                            </div>
+                    commitState = <div>Commit period concluded.<br/></div>;
+                    votingButtons = <div><br/><a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onVoteRevealClicked.bind(this)}>
+                    <i className="material-icons right">thumbs_up_down</i><b>Reveal Vote</b></a></div>
                 }
             }
         }
@@ -109,7 +94,7 @@ class AsContenderVoterItem extends Component {
         
     return (
         <div className="AsContenderVoterItem">
-            <strong>{contenderName}</strong>
+            <h6><b>{contenderName}</b></h6>
             {challengeStatus}
             {incentiveAmount}
             {commitState}

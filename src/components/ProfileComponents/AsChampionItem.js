@@ -46,7 +46,7 @@ class AsChampionItem extends Component {
         if(this.props.item.isConcluded){
             challengeState = ""
         }
-        else challengeState = <div>Currently challenged<br/></div>
+        else challengeState = <div style={{color: "#e06666"}}><b>Currently challenged</b><br/></div>
 
         if(this.state.isSafe){
             stakeStatus = <div>(Your stake is sufficient.)<br/></div>
@@ -57,13 +57,17 @@ class AsChampionItem extends Component {
                 
     return (
         <div className="AsChampionItem">
-            <strong>{this.props.item.contender}</strong><br/>
+            <h5 style={{color: "#4f4f4f"}}><b>{this.props.item.contender}</b></h5>
             {challengeState}
             Reserved Stake: {this.state.reservedStake} tokens
-            <div style={{display: "flex", justifyContent: "flex-start", width: "200px"}}>
-                <input type="number" placeholder="No. of Tokens" onChange={this.onDepositValueChanged.bind(this)}/>
-                <button onClick={this.onDepositClicked.bind(this)}>Deposit</button>
+          
+            <div style={{display: "flex", alignItems: "center"}}>
+                <input type="number" style={{width: "170px", marginRight: "7px"}} placeholder="No. of Tokens" onChange={this.onDepositValueChanged.bind(this)}/>
+                <a className="waves-effect waves-light teal-text text-lighten-1" onClick={this.onDepositClicked.bind(this)}>
+                <i className="material-icons right">add_box</i><b>DEPOSIT</b></a>
             </div>
+            
+                
             {stakeStatus}
         </div>
     );

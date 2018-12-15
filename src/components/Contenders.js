@@ -96,10 +96,10 @@ class Contenders extends Component {
         if(this.state.commitCard){
             commitCard = <div className="vote-card">
                 <Card className = "z-depth-2" actions={[
-                <a href='#' className="orange-text text-darken-2" onClick={this.onVoteUpClicked.bind(this)}><b>Vote Up</b></a>,
-                <a href='#' className="orange-text text-darken-2" onClick={this.onVoteDownClicked.bind(this)}><b>Vote Down</b></a>,
-                <a href='#' className="orange-text text-darken-2" onClick={this.cancelCommit.bind(this)}><b>Close</b></a>]}>
-                    <h4>Commit Vote</h4>
+                <a href='#' className="teal-text text-lighten-1" onClick={this.onVoteUpClicked.bind(this)}><b>Vote Up</b></a>,
+                <a href='#' className="teal-text text-lighten-1" onClick={this.onVoteDownClicked.bind(this)}><b>Vote Down</b></a>,
+                <a href='#' className="teal-text text-lighten-1" onClick={this.cancelCommit.bind(this)}><b>Close</b></a>]}>
+                    <h4 style={{color: "#666666"}}>Commit Vote</h4>
                     <div className="divider"></div>
                     <br/>
                     <div>
@@ -116,10 +116,10 @@ class Contenders extends Component {
         if(this.state.revealCard){
             revealCard = <div className="vote-card">
                 <Card className="z-depth-2" actions={[
-                <a href='#' className="orange-text text-darken-2" onClick={this.onRevealVoteUpClicked.bind(this)}><b>Vote Up</b></a>,
-                <a href='#' className="orange-text text-darken-2" onClick={this.onRevealVoteDownClicked.bind(this)}><b>Vote Down</b></a>,
-                <a href='#' className="orange-text text-darken-2" onClick={this.cancelCommit.bind(this)}><b>Close</b></a>]}>
-                    <h4>Reveal Vote</h4>
+                <a href='#' className="teal-text text-lighten-1" onClick={this.onRevealVoteUpClicked.bind(this)}><b>Vote Up</b></a>,
+                <a href='#' className="teal-text text-lighten-1" onClick={this.onRevealVoteDownClicked.bind(this)}><b>Vote Down</b></a>,
+                <a href='#' className="teal-text text-lighten-1" onClick={this.cancelCommit.bind(this)}><b>Close</b></a>]}>
+                    <h4 style={{color: "#666666"}}>Reveal Vote</h4>
                     <div className="divider"></div>
                     <br/>
                     <div>
@@ -131,7 +131,17 @@ class Contenders extends Component {
 
         let process = "";
         if(this.props.dataStatus === true){
-        process = <img id="process" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif" style={{width: "50px"}}/>
+            process = <div className="preloader-wrapper small active">
+            <div className="spinner-layer">
+              <div className="circle-clipper left">
+                <div className="circle"></div>
+              </div><div className="gap-patch">
+                <div className="circle"></div>
+              </div><div className="circle-clipper right">
+                <div className="circle"></div>
+              </div>
+            </div>
+          </div>
         }
         
         
@@ -145,16 +155,15 @@ class Contenders extends Component {
         }
 
     return (
-        <div className="Contenders">
-            <h3>Contenders</h3>
-            <div className="divider"></div>
-            <br/>
+        <div className="Contenders z-depth-1" style={{width: "108%", borderTopLeftRadius: "25px", borderBottomRightRadius: "25px"}}>
+            <div className="card grey-text text-lighten-5 z-depth-0" style={{backgroundColor: "#7f2099", margin: 0,paddingTop: "1px", paddingBottom: "1px", paddingLeft: "30px", borderTopLeftRadius: "25px"}}><h4>Applicant List</h4></div>
             {commitCard}
             {revealCard}
-            <table style={{width: "1000px"}}>
-            <thead>
+            <br/>
+            <table style={{width: "1000px", marginLeft: "30px"}}>
+            <thead style={{color: "#666666"}}>
             <tr>
-                <th>Contender</th>
+                <th>Name</th>
                 <th>Status</th>
                 <th>Apply Stage</th>
                 <th>Commit Stage</th>
@@ -166,7 +175,11 @@ class Contenders extends Component {
                 {items}
             </tbody>
             </table>
-            {process}
+            
+            <br/>
+            <div style={{marginLeft: "30px"}}>{process}</div>
+            <br/>
+            
         </div>
     );
   }
