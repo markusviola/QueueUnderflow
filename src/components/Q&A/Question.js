@@ -18,12 +18,12 @@ class Question extends Component {
     }
 
     async getQuestion(){
-        axios.get(`http://localhost:5000/api/question/id/`+this.props.selectedQuestion)
+        axios.get(`http://localhost:52009/api/question/id/`+this.props.selectedQuestion)
         .then(res => {
             this.setState({questionDetails: res.data})
         })
 
-        axios.get(`http://localhost:5000/api/answer/question/id/`+this.props.selectedQuestion)
+        axios.get(`http://localhost:52009/api/answer/question/id/`+this.props.selectedQuestion)
         .then(res => {
             this.setState({currentAnswers: res.data})
         })
@@ -39,7 +39,7 @@ class Question extends Component {
         this.setState({
             userChampions: champions
         },() => {
-            console.log(this.state.userChampions);
+            
         })
 
     }
@@ -48,6 +48,16 @@ class Question extends Component {
         this.getQuestion();
         this.getChampionDetails();
         
+    }
+
+    handleAnswer(isSuccess){
+        if(isSuccess){
+            this.getQuestion();
+            window.Materialize.toast("Answer submitted!", 2200);
+        }
+        else{
+            window.Materialize.toast("Something went wrong.", 2200);
+        }
     }
 
     render() {
@@ -69,7 +79,7 @@ class Question extends Component {
                             </div>
                             
                             </div>
-                            <AnswerForm questionID = {this.props.selectedQuestion} instance = {this.props.instance} currentChampions = {this.state.userChampions}/>
+                            <AnswerForm onAnswered = {this.handleAnswer.bind(this)} questionID = {this.props.selectedQuestion} instance = {this.props.instance} currentChampions = {this.state.userChampions}/>
                         </div>
         }
 

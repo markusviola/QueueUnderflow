@@ -110,7 +110,7 @@ class App extends Component {
     this.state.env.PLCRTokensRescued().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.PLCRVotingRightsWithdrawn().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.PLCRVotingRightsGranted().then((result)=>{this.hideProcess(result[0],result[1])});
-    
+
   
     this.state.env.registryOperationEvent().then((result)=>{this.hideProcess(result[0],result[1])});
     this.state.env.registryNewContender().then((result)=>{this.hideProcess(result[0],result[1])});
@@ -186,7 +186,7 @@ class App extends Component {
               })
           }
           
-          this.setState({currentContenders: updatedContenders, contenderProcessStatus: false},() => {});
+          this.setState({currentContenders: updatedContenders, contenderProcessStatus: false},() => {console.log(this.state.currentContenders)});
       });
   }
 
@@ -363,7 +363,7 @@ class App extends Component {
   onGetVotingBalance(){
     this.state.env.PLCRGetVotingBalance()
     .then((balance) => {
-      alert("Your current balance is: "+ balance);
+      window.Materialize.toast("Your current balance is: "+ balance, 2200);
     });
   }
 

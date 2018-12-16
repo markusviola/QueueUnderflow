@@ -26,11 +26,23 @@ class QuestionForm extends Component {
             askedByName: this.state.name !== "" ? String(this.state.name) : "Anonymous"
         };
 
-        axios.post(`http://localhost:5000/api/question/create`, que)
+        axios.post(`http://localhost:52009/api/question/create`, que)
         .then(res => {
-            alert(res.data);
+            if(res.data === "Success"){
+                window.Materialize.toast("Question submitted!", 2200);
+                this.clearInput();
+            }
+            else {
+                window.Materialize.toast("Something went wrong.", 2200);
+            }
         })
         e.preventDefault();
+    }
+
+    clearInput(){
+        this.refs.name.value = "";
+        this.refs.subject.value = "";
+        this.refs.que_content.value = "";
     }
 
     onQuestionChange(evt){
@@ -60,12 +72,12 @@ class QuestionForm extends Component {
                     <div>
                         <br/>
                         Subject<br/>
-                        <input type="text" onChange={this.onSubjectChange.bind(this)} placeholder="Input the topic of your question."/>
+                        <input type="text" onChange={this.onSubjectChange.bind(this)} placeholder="Input the topic of your question." ref="subject"/>
                     </div>
                     <div>
                         <br/>
                         Question<br/><br/>
-                        <textarea onChange={this.onQuestionChange.bind(this)} placeholder=" Input your question" style={{width:"100%", height:"300px"}} />
+                        <textarea onChange={this.onQuestionChange.bind(this)} placeholder=" Input your question" style={{width:"100%", height:"300px"}} ref="que_content"/>
                     </div>
                 </div>
             </Card>

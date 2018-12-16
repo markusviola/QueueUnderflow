@@ -21,7 +21,7 @@ class QuestionItem extends Component {
                 <b>{contents[0]}</b><br/>
                 </a>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
-                    {contents[1].substring(0,60)}
+                    {contents[1].substring(0,100)}
                     <div><i class="material-icons right purple-text text-darken-1">person_pin</i>By {this.props.item.askedByName}</div>
                 </div>
             <br/>

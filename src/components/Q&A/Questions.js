@@ -18,7 +18,7 @@ class Questions extends Component {
     }
 
     async getQuestions(){
-        axios.get(`http://localhost:5000/api/question`)
+        axios.get(`http://localhost:52009/api/question`)
         .then(res => {
             const questions = res.data;
             this.setState({ currentQuestions: questions }, () => {});

@@ -27,14 +27,16 @@ class AnswerForm extends Component {
             question_id: parseInt(this.props.questionID)
         };
 
-        console.log("Statement: "+this.state.statement)
-        console.log("Answered By: "+this.props.instance.getCurrentAccount())
-        console.log("Answered By Name: "+this.props.currentChampions[0].contender)
-        console.log("Question ID: "+this.props.questionID)
-
-        axios.post(`http://localhost:5000/api/answer/create`, que, config)
+        axios.post(`http://localhost:52009/api/answer/create`, que, config)
         .then(res => {
-            alert(res.data);
+            if(res.data === "Success"){
+                this.props.onAnswered(true);
+                this.refs.ans_content.value = "";
+            }
+            else {
+                this.props.onAnswered(false);
+            }
+            
         })
         e.preventDefault();
     }
@@ -48,7 +50,7 @@ class AnswerForm extends Component {
             <div className="AnswerForm" style={{paddingLeft: "10px"}}>
                     <div style={{marginBottom: "7px"}}>
                         Provide your answer:<br/>
-                        <textarea onChange={this.onAnswerChange.bind(this)} placeholder="Write your answer here..." style={{marginTop: "5px", width:"650px", height:"190px"}} />
+                        <textarea onChange={this.onAnswerChange.bind(this)} ref="ans_content" placeholder="Write your answer here..." style={{marginTop: "5px", width:"650px", height:"190px"}} />
                     </div>
                     <a className="waves-effect waves-light btn" onClick={this.handleSubmit.bind(this)}>
                     <i className="material-icons right">create</i>Submit Answer</a>
